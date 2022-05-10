@@ -23,7 +23,7 @@ const GameProfile = (data1: any) => {
               <div>GAME {data1.number.slice(-10)}</div>
               <div className="stat">Played Against : {data1.opponent}</div>
               <div className="stat">Status : {data1.status}</div>
-              {(data1.status !== "Open") && <div className="button"><button onClick={startGame}>Resume</button></div>}
+              {(data1.status !== "Open" || data1.status !== "Ended") && <div className="button"><button onClick={startGame}>Resume</button></div>}
             </div>)
   }
   

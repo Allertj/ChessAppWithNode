@@ -5,26 +5,23 @@ import { LoginScreen } from './items/login'
 import { MainContainer } from './items/maincontainer'
 import { NavBar } from './items/navbar'
 import { Register} from './items/register'
-import { makeGETRequest, makeGETRequestAuth} from './items/requests'
+import { makeGETRequestAuth} from './items/requests'
 import { server } from './config'
 import { createSocket }from './items/createsocket'
-import { Routes, Route, Navigate } from "react-router-dom";
+import { Routes, Route, Navigate, useNavigate } from "react-router-dom";
 
 const Page = () => {
   let [retrievedGames, setRetrievedGames] = React.useState([])
   let [gameasjson, setGameAsJson] = React.useState({})
   let [userdata, setUserData] = React.useState({}) 
-  let [activescreen, setActiveScreen] = React.useState("Login")
-
-  const setActive = (newstate: any) => {
-      setActiveScreen(newstate)
-  }  
 
   const loadProfile = (data: any) => {
-    setRetrievedGames(data)
-    setActive("Profile")
-}
+      setRetrievedGames(data)
+  }
+
   const loginthesite = (data : any) => {
+      let aaa =  JSON.stringify(data)
+      localStorage.setItem("userdata", aaa)
       setUserData(data)
       makeGETRequestAuth (`${server}/profile/${data.id}`, loadProfile, "", data.accessToken)
   }
@@ -36,14 +33,32 @@ const Page = () => {
 
   const chooseGame = (gameasjson: JSON) => {
       setGameAsJson(gameasjson)
-      setActive("Game")
   }
-  console.log(userdata, userdata == "", "USERDATA")
+
+  React.useEffect(() => {
+    let results = localStorage.getItem("userdata")   
+    if (results !== null) {
+        setUserData(JSON.parse(results))
+    }
+  }, [])
+  let navigate = useNavigate();
+  const handleLogout = () => {
+      localStorage.removeItem("userdata")
+      setUserData({})
+      navigate("/login", { replace: true });
+  }
+  let profile = <ProfilePage userdata={userdata} 
+                             checkForGames={checkForGames}
+                             retrievedGames={retrievedGames} 
+                             handlechoice={chooseGame}/>
+
+
+  let standard =  Object.keys(userdata).length === 0 ? <LoginScreen login={loginthesite}/> : profile
+  console.log(Object.keys(userdata).length === 0, "standard") 
   return (<div className="main-container">
             
-            <NavBar handlelogin={setActive} 
+            <NavBar handleLogout={handleLogout} 
                     profile={checkForGames} 
-                    active={activescreen} 
                     userdata={userdata}/> 
             <Routes>
                 <Route path="/" 
@@ -53,30 +68,15 @@ const Page = () => {
                 <Route path="/register" 
                        element={<Register/>} />     
                 <Route path="/profile" 
-                       element={<ProfilePage userdata={userdata} 
-                                             checkForGames={checkForGames}
-                                             retrievedGames={retrievedGames} 
-                                             handlechoice={chooseGame}/>} />             
+                       element={standard} />             
                 <Route path="/game" 
-                //@ts-expect-error
-                       element={<MainContainer socket={createSocket(userdata.accessToken, userdata.id)}
-                                               gamedata={gameasjson} 
-                                               activescreen={activescreen}  
-                                               userdata={userdata}/>}/> 
-                <Route path="*" element={ userdata === "" ? <Navigate to="/login" />: <Navigate to="/profile" />} />                                 
-            </Routes>  
-
-            {/* {(activescreen === "Login")     && <LoginScreen login={loginthesite}/>}
-            {(activescreen === "Register")  && <Register/>}  
-            {(activescreen === "Profile")   && <ProfilePage     userdata={userdata} 
-                                                                checkForGames={checkForGames}
-                                                                retrievedGames={retrievedGames} 
-                                                                handlechoice={chooseGame}/>}
-            {(activescreen === "Game")      && <MainContainer   socket={createSocket(userdata.accessToken, userdata.id)}
-                                                                gamedata={gameasjson} 
-                                                                activescreen={activescreen}  
-                                                                userdata={userdata}/>} */}
-                                                    
+                       element={Object.keys(gameasjson).length === 0 ? standard :
+                                        //@ts-expect-error 
+                                 <MainContainer socket={createSocket(userdata.accessToken, userdata.id)}
+                                                gamedata={gameasjson} 
+                                                userdata={userdata}/>}/> 
+                <Route path="*" element={standard} />                                 
+            </Routes>                                                     
          </div>)      
 }
 

@@ -30,7 +30,7 @@ const makeGETRequest = (address: string, callback: (data: any) => void, attr: st
       headers: { 'Content-Type': 'application/json',
                  "x-access-token": token}
     };
-    console.log("requestoptions", requestOptions);
+    // console.log("requestoptions", requestOptions);
     fetch(address, requestOptions)
       .then(response => response.json() )
       .then(data => { 

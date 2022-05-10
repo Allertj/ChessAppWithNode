@@ -5,11 +5,16 @@ const SideBar = (data: any) => {
     let black = data.moves.filter((move: any) => move.player === "BLACK")
            .map((moves: any) => 
                  <div key={moves.notation}>{moves.piece !== "P" && moves.piece} {moves.notation}</div>)
+    const concede = () => {
+        data.setStatus("You have conceded")
+        data.concede()
+    }
+
     return (
       <div className="sidebar flex-child">
         <div className='flex-container'>
-        <div className='column sidebar-option'>CONCEDE</div> 
-        <div className='column sidebar-option'>PROPOSE DRAW</div>          
+        <div className='column sidebar-option' onClick={concede}>CONCEDE</div> 
+        <div className='column sidebar-option' onClick={data.proposeDraw}>PROPOSE DRAW</div>          
         </div>
         <div className="moves">STATUS:</div>
           <div id="caller">{data.status}</div>

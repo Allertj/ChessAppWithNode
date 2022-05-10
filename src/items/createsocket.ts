@@ -10,11 +10,11 @@ const createSocket = (token: string, id: string) => {
         }})
 
     socket.on("connectaaa", (msg) => {
-      console.log("connected to socket:", msg)
+      // console.log("connected to socket:", msg)
     })
 
     socket.on("disconnect", () => {
-      console.log("disconnected from socket:", socket.id); 
+      // console.log("disconnected from socket:", socket.id); 
     });
     return socket
 }

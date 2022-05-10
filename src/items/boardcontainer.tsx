@@ -3,6 +3,8 @@ import { Board , XYString, ReverseBoard } from './board';
 import { SideBar } from './sidebar'
 import { replacer } from './helper'
 import { Popup } from './promotion'
+import { ProposeDraw } from './proposedraw';
+import {status1} from "../chess/misc"
 
 const BoardContainer = (gameid: any) => {
     const [board, setBoard] = React.useState(() => {return gameid.game.board})
@@ -10,7 +12,6 @@ const BoardContainer = (gameid: any) => {
     const [options, setOptions] = React.useState(() => {return gameid.game.latest_poss_as_string})
     const [status, setStatus] = React.useState(() => {return gameid.game.status})
     const [moves, setMoves] = React.useState(() => {return gameid.game.getMoves()})
-    // const [choice, setChoice] = React.useState(() => {return gameid.game.getMoves()})
 
 
     const verifyMove = (msg: any) => {
@@ -40,6 +41,20 @@ const BoardContainer = (gameid: any) => {
             gameid.game.promotePiece(x, y, player, piece) 
             setStatus("Playing")
         })
+        gameid.socket.on("draw_proposed", (msg: any) => {
+            gameid.setDrawProposed(true)
+        })
+        gameid.socket.on("draw_finalised", (msg: any) => {
+            if (msg.result === "accepted") {
+                // gameid.game.status = status1.DRAW
+                // gameid.game.turn = 2
+                // gameid.game.player1id = 342
+                setStatus("Draw")
+                gameid.game.drawGame()
+                console.log("DRAW FINALISED FIRED", gameid.game)
+            }
+            // console.log("draw finalised in boardcontainer", msg.result === "accepted")
+        })
     }, [gameid.socket])
 
     const askPromotePiece = (piece: any) => {
@@ -50,6 +65,7 @@ const BoardContainer = (gameid: any) => {
     }
 
     const updateFromBoard = ([x, y]: Array<any>) => {
+        console.log("updateFromBoard", gameid.game.status)
         if (!options.includes(XYString(x, y))) {
             gameid.game.getPossibilities(Number(gameid.game.color), x, y)
             
@@ -63,12 +79,16 @@ const BoardContainer = (gameid: any) => {
         setHighlighted(gameid.game.last_selected)
         setStatus(gameid.game.status)
         setMoves(gameid.game.getMoves())
+        // const draw
     }
-    return <div className="flex-container"><SideBar id={40} 
-                                                    moves={moves} 
+    return <div className="flex-container"><SideBar moves={moves} 
+                                                    concede={gameid.concede}
+                                                    proposeDraw={gameid.proposeDraw}
+                                                    setStatus={setStatus}
                                                     status={status}/> 
           <Popup openMenu={status === "Promotion" && gameid.game.promotion.player === gameid.game.color} 
-                 askPromotePiece={askPromotePiece}/>                                           
+                 askPromotePiece={askPromotePiece}/>  
+          <ProposeDraw openMenu={gameid.drawproposed} drawAnswer={gameid.drawAnswer}/>                                               
         {gameid.game.color === 1 && <ReverseBoard board={board}
                                                   highlighted={highlighted}
                                                   options={options} 

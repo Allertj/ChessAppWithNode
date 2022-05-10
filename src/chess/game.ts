@@ -1,216 +1,18 @@
-const validNumbers = (x: number, y: number): boolean => {
-    if (x >= 0 && y >= 0 && x <= 7 && y <= 7) {
-        return true;
-    }
-    return false;
-}
-
-const linemakerCheck = (board: Array<Array<Piece | null>>, x: number, y: number, t1: number, t2: number, player:Player, piece: Array<string>) : boolean => {
-    for (let i = 1; i < 8; i++) {
-        if (x + (t1 * i) >= 0 && y + (t2 * i) >= 0 && x + (t1 * i) <= 7 && y + (t2 * i) <= 7) {
-            if (board[x + (t1 * i)][y + (t2 * i)] !== null) {
-                let current = board[x + (t1 * i)][y + (t2 * i)];
-                if (current && current.player === player) { return false}
-                if (current && current.player !== player) {
-                    if (current.letter && !piece.includes(current.letter.toString())) {
-                        return false;
-                    }
-                    else {
-                        return true;
-                    }
-                }
-            }
-        }
-    }
-    return false;
-};
-
-const linemaker = (board: Array<Array<Piece | null>>, x: number, y: number, t1: number, t2: number, player: Player, piece: String = "") : Array<[number, number]> => {
-    let possible : Array<[number, number]> = []
-    for (let i = 1; i < 8; i++) {
-        if (x + (t1 * i) >= 0 && y + (t2 * i) >= 0 && x + (t1 * i) <= 7 && y + (t2 * i) <= 7) {
-            if (board[x + (t1 * i)][y + (t2 * i)] !== null) {
-                let current = board[x + (t1 * i)][y + (t2 * i)];
-                if (current?.player === player) {
-                    break;
-                }
-                else {
-                    possible.push([(x + (t1 * i)), (y + (t2 * i))]);
-                    break;
-                }
-            }
-            possible.push([(x + (t1 * i)), (y + (t2 * i))]);
-        }
-    }
-    return possible;
-};
-
-enum Player { BLACK, WHITE}
-
-abstract class Piece {
-    x: number;
-    y: number;
-    moved: boolean = false
-    player: Player
-    typeletter: string
-    constructor(x: number, y: number, player: Player, moved: boolean = false, typeletter: string) {
-        this.x = x
-        this.y = y
-        this.moved = moved
-        this.player = player
-        this.typeletter = typeletter
-    }
-    abstract getMovements(board: Array<Array<Piece | null>>, x: number, y: number): Array<[number, number]>
-    abstract get letter() : String    
-}
-
-class Rook extends Piece {
-    // typeletter: string
-    constructor(x: number, y: number, player: Player, moved: boolean = false) {
-        super(x, y, player, moved, "R")
-        // this.typeletter = "R"
-    }
-    getMovements(board: Array<Array<Piece | null>>, x: number, y: number): Array<[number, number]> {
-        let poss1 = linemaker(board, x, y,  0,  1, this.player);
-        let poss2 = linemaker(board, x, y,  0, -1, this.player);
-        let poss3 = linemaker(board, x, y,  1,  0, this.player);
-        let poss4 = linemaker(board, x, y, -1,  0, this.player);
-        return poss1.concat(poss2, poss3, poss4);
-    }
-    get letter() {
-        return this.typeletter;
-    }
-}
-
-class Bishop extends Piece {
-    // typeletter : string
-    constructor(x: number, y: number, player: Player, moved: boolean = false) {
-        super(x, y, player, moved, "B")
-        // this.typeletter = "B"
-    }
-    getMovements(board: Array<Array<Piece | null>>, x: number, y: number): Array<[number, number]> {
-        let poss1 = linemaker(board, x, y, 1, 1, this.player);
-        let poss2 = linemaker(board, x, y, -1, -1, this.player);
-        let poss3 = linemaker(board, x, y, 1, -1, this.player);
-        let poss4 = linemaker(board, x, y, -1, 1, this.player);
-        return poss1.concat(poss2, poss3, poss4);
-    }
-    get letter() {
-        return this.typeletter;
-    }
-}
-
-class Knight extends Piece {
-    // typeletter : string
-    constructor(x: number, y: number, player: Player, moved: boolean = false) {
-        super(x, y, player, moved, "K")
-        // this.typeletter = "K"
-    }
-    getMovements(board: Array<Array<Piece | null>>, x: number, y: number): Array<[number, number]> {
-        let poss = [[2, -1], [2, 1], [-2, -1], [-2, 1], [-1, 2], [1, 2], [-1, -2], [1, -2]];
-        let possible: Array<[number, number]> = [];
-        poss.forEach(element => {
-            if (element[0] + x >= 0 && element[1] + y >= 0 && element[0] + x <= 7 && element[1] + y <= 7) {
-                let loc = board[element[0] + x][element[1] + y];
-                if (loc && loc.player === this.player) { }
-                else {
-                    possible.push([(element[0] + x), (element[1] + y)]);
-                }
-            }
-        });
-        return possible;
-    }
-    get letter() {
-        return this.typeletter;
-    }
-}
-
-class Queen extends Piece {
-    constructor(x: number, y: number, player: Player, moved: boolean = false) {
-        super(x, y, player, moved, "Q")
-    }
-    getMovements(board: Array<Array<Piece | null >>, x: number, y: number): Array<[number, number]> {
-        let poss1 = linemaker(board, x, y, 1, 1, this.player);
-        let poss2 = linemaker(board, x, y, -1, -1, this.player);
-        let poss3 = linemaker(board, x, y, 1, -1, this.player);
-        let poss4 = linemaker(board, x, y, -1, 1, this.player);
-        let poss5 = linemaker(board, x, y, 0, 1, this.player);
-        let poss6 = linemaker(board, x, y, 0, -1, this.player);
-        let poss7 = linemaker(board, x, y, 1, 0, this.player);
-        let poss8 = linemaker(board, x, y, -1, 0, this.player);
-        return poss1.concat(poss2, poss3, poss4, poss5, poss6, poss7, poss8);
-    }
-    get letter() {
-        return this.typeletter;
-    }
-}
-
-class King extends Piece {
-    constructor(x: number, y: number, player: Player, moved: boolean = false) {
-        super(x, y, player, moved, "M")
-    }
-    getMovements(board: Array<Array<Piece | null>>, x: number, y: number): Array<[number, number]> {
-        let poss = [[-1, -1], [-1, 0], [-1, 1], [0, 1], [0, -1], [1, -1], [1, 0], [1, 1]];
-        let possible : Array<[number, number]>  = [];
-        poss.forEach(element => {
-            if (element[0] + x >= 0 && element[1] + y >= 0 && element[0] + x <= 7 && element[1] + y <= 7) {
-                if (board[element[0] + x][element[1] + y] === null || board[element[0] + x][element[1] + y]?.player !== this.player) {
-                    possible.push([(element[0] + x), (element[1] + y)]);
-                }
-            }
-        });
-        return possible;
-    }
-    get letter() {
-        return this.typeletter;
-    }
-}
-
-class Pawn extends Piece {
-    constructor(x: number, y: number, player: Player, moved: boolean = false) {
-        super(x, y, player, moved, "P")
-    }
-    getMovements(board: Array<Array<Piece | null>>, x: number, y: number): Array<[number, number]> {
-        let heading = new Map([[Player.WHITE, 1], [Player.BLACK, -1]]);
-        let starts = new Map([[Player.WHITE, 2], [Player.BLACK, -2]]);
-        let possible : Array<[number, number]>  = [];
-        let index2 = Number(heading.get(this.player));
-        if (validNumbers(x+index2, y) && !board[x + index2][y]) {
-            possible.push([x + index2, y]);
-            if (!this.moved) {
-                let index = Number(starts.get(this.player));
-                if (validNumbers(x+index, y) && !board[x + index][y]) {
-                    possible.push([x + index, y]);
-                }
-            }
-        }
-        let strikes1 = new Map([[Player.WHITE, [[x + 1, y - 1], [x + 1, y + 1]]],
-                                [Player.BLACK, [[x - 1, y - 1], [x - 1, y + 1]]]]);
-        //@ts-expect-error
-        for (let [x1, y1] of strikes1.get(this.player)) {
-            if (validNumbers(x1, y1) && board[x1][y1] !== null && board[x1][y1]?.player !== this.player) {
-                possible.push([x1, y1]);
-            }
-        }
-        return possible;
-    }
-    get letter() {
-        return this.typeletter;
-    }
-}
-
-enum status1 {PLAYING = "Playing", 
-              CHECKMATE = "Checkmate",
-              PROMOTION = "Promotion", 
-              CHECK = "Check", 
-              STALEMATE = "Stalemate"}
+import {Piece} from './piece'
+import {status1, linemakerCheck, Player} from './misc'
+import {King} from './king'
+import {Queen} from './queen'
+import {Rook} from './rook'
+import {Bishop} from './bishop'
+import {Knight} from './knight'
+import { Pawn } from './pawn'
 
 class Game {
     board : Array<Array<Piece | null>> = []
     turn : Player =  Player.BLACK
     id : number = 0
-    player0id : number = 0
-    player1id : number = 0
+    // player0id : number = 0
+    // player1id : number = 0
     color: number = 2
     status = status1.PLAYING
     passed_pawn = new Map()
@@ -219,9 +21,11 @@ class Game {
     promotion = {x : 8, y : 8, player : 2}
     latest_poss: Array<[number, number]>= []
     moves = []
+    // result = {winner: 0, loser: 0, draw: false, result: false}
     movescount = 0
     last_selected = []
     constructor(gameInfo: string="") {
+        console.log("INIT FIRED")
         if (this.board.length === 0) {
             this.buildBoard(gameInfo)
         }
@@ -236,6 +40,13 @@ class Game {
     get latest_poss_as_string () {
         return this.latest_poss.map(value => value[0].toString()+value[1].toString())
     }
+    concedeGame(info: any) {
+        this.status = status1.CONCEDED
+    }
+    drawGame() {
+        console.log("DRAWGAME FIRED")
+        this.status = status1.DRAW
+    }
     getMoves() {
         let result = []
         let players = new Map([[1, "WHITE"], [0, "BLACK"]])
@@ -248,6 +59,8 @@ class Game {
         return result
     }
     getPossibilities(player: Player, x: number, y: number, forlegal: boolean) {
+        // console.log("getPossibilities", this.status, status1.DRAW === this.status)
+        if (this.status === status1.DRAW) {return []}
         if (!forlegal) { if (Number(player) === Number(this.turn)) {return []}}
         let temp : Array<[number, number]>= [];
         if (this.board[x][y] && this.board[x][y]?.player === player) {
@@ -311,8 +124,11 @@ class Game {
         let checkPlayer = 1 - this.turn;
         let inCheck = this.checkForCheck(checkPlayer, this.board);
         let legalMoves = this.checkIfAnyLegalMove(player);
+        // console.log("CHECKSTATUS FIRED")
         switch (true) {
-            case (inCheck === true && legalMoves === false): return status1.CHECKMATE;
+            case (inCheck === true && legalMoves === false): {
+                // console.log("CHECKPALYER", player, this.color, player === this.color)                
+                return status1.CHECKMATE;}
             case (inCheck === false && legalMoves === false): return status1.STALEMATE;
             case (inCheck === true && legalMoves === true): return status1.CHECK;
             default: return status1.PLAYING;
@@ -499,4 +315,4 @@ class Game {
         this.board = newBoard; 
     }
 }
-export {Player, Piece, Rook, King, Knight, Bishop, Queen, Pawn, Game}
+export { Game}
