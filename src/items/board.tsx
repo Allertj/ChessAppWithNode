@@ -5,8 +5,9 @@ import { useDrop } from 'react-dnd'
 import { DndProvider } from 'react-dnd'
 import { HTML5Backend } from 'react-dnd-html5-backend'
 
-const figures = [new Map([["Q", "♛"], ["M", "♚"], ["R", "♜"],["K", "♞"], ["B", "♝"], ["P", "♟"]]),
-                 new Map([["Q", "♕"], ["M", "♔"], ["R", "♖"],["K", "♘"], ["B", "♗"], ["P", "♙"]])]
+const figures = [new Map([["Q", "♕"], ["M", "♔"], ["R", "♖"],["K", "♘"], ["B", "♗"], ["P", "♙"]]),
+    new Map([["Q", "♛"], ["M", "♚"], ["R", "♜"],["K", "♞"], ["B", "♝"], ["P", "♟"]])
+                 ]
               
 const XY = (target : string) => {
     return [Number(target[1]), Number(target[2])]

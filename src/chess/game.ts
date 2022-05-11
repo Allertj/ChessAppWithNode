@@ -1,15 +1,15 @@
-import {Piece} from './piece'
-import {status1, linemakerCheck, Player} from './misc'
-import {King} from './king'
-import {Queen} from './queen'
-import {Rook} from './rook'
-import {Bishop} from './bishop'
-import {Knight} from './knight'
+import { Piece } from './piece'
+import { status1, linemakerCheck, Player} from './misc'
+import { King } from './king'
+import { Queen } from './queen'
+import { Rook } from './rook'
+import { Bishop } from './bishop'
+import { Knight } from './knight'
 import { Pawn } from './pawn'
 
 class Game {
     board : Array<Array<Piece | null>> = []
-    turn : Player =  Player.BLACK
+    turn : Player = Player.WHITE
     id : number = 0
     color: number = 2
     status = status1.PLAYING
@@ -47,25 +47,27 @@ class Game {
         let players = new Map([[1, "WHITE"], [0, "BLACK"]])
         let letter = new Map([[7, "A"], [6, "B"], [5, "C"], [4, "D"], [3, "E"], [2, "F"], [1, "G"], [0, "H"]])
         for (let [player, x, y, destx, desty,, strike, piece] of this.moves) {
-            result.push({player: players.get(player), 
-                         piece: piece, 
-                         notation: letter.get(y)+(x+1).toString()+strike+letter.get(desty)+(destx+1).toString()})
+            let notation = letter.get(y)+(x+1).toString()+strike+letter.get(desty)+(destx+1).toString()
+            if (Math.abs(y-desty) === 3 && piece === "M") { notation = "0-0" } 
+            if (Math.abs(y-desty) === 4 && piece === "M") { notation = "0-0-0" }
+            else { 
+                result.push({player: players.get(player), 
+                             piece: piece, 
+                             notation: notation})
+            }             
         }
         return result
     }
     getPossibilities(player: Player, x: number, y: number, forlegal: boolean) {
-        // console.log("getPossibilities", this.status, status1.DRAW === this.status)
         if (this.status === status1.DRAW) {return []}
         if (!forlegal) { if (Number(player) === Number(this.turn)) {return []}}
         let temp : Array<[number, number]>= [];
         if (this.board[x][y] && this.board[x][y]?.player === player) {
             let poss = this.board[x][y]?.getMovements(this.board, x, y);
             if (this.passed_pawn.has([x, y].join(","))) {
-                        //@ts-expect-error
-                poss.push(this.passed_pawn.get([x, y].join(",")));
+                poss?.push(this.passed_pawn.get([x, y].join(",")));
             }
-                    //@ts-expect-error
-            poss.forEach(value => {
+            poss?.forEach(value => {
                 if (this.moveLegal(this.board, x, y, value[0], value[1], player)) {
                     temp.push(value);
                 }
@@ -118,13 +120,10 @@ class Game {
         let checkPlayer = 1 - this.turn;
         let inCheck = this.checkForCheck(checkPlayer, this.board);
         let legalMoves = this.checkIfAnyLegalMove(player);
-        // console.log("CHECKSTATUS FIRED")
         switch (true) {
-            case (inCheck === true && legalMoves === false): {
-                // console.log("CHECKPALYER", player, this.color, player === this.color)                
-                return status1.CHECKMATE;}
+            case (inCheck === true && legalMoves === false):  return status1.CHECKMATE;
             case (inCheck === false && legalMoves === false): return status1.STALEMATE;
-            case (inCheck === true && legalMoves === true): return status1.CHECK;
+            case (inCheck === true && legalMoves === true):   return status1.CHECK;
             default: return status1.PLAYING;
         }
     }
