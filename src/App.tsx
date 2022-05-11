@@ -1,4 +1,3 @@
-import './App.css';
 import React from 'react';
 import { ProfilePage } from './items/profilepage';
 import { LoginScreen } from './items/login'

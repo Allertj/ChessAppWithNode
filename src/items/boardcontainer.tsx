@@ -44,7 +44,6 @@ const BoardContainer = (gameid: any) => {
             }
         })
         gameid.socket.on("other_player_has_conceded", (msg: any) => {
-            // console.log("other player has conceeded")
             setStatus("Other player has conceeded")
             gameid.game.concedeGame()
         })
@@ -58,7 +57,7 @@ const BoardContainer = (gameid: any) => {
     }
 
     const updateFromBoard = ([x, y]: Array<any>) => {
-        if (status === "Draw" || status === "Conceded" || status === "You ") {return }
+        if (status === "Draw" || status === "Conceded" || status === "You have conceeded" || status === "Other player has conceeded") {return }
         if (!options.includes(XYString(x, y))) {
             gameid.game.getPossibilities(Number(gameid.game.color), x, y)
             

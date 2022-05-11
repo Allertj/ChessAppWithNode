@@ -1,11 +1,10 @@
-import React from 'react'
+import React from 'react';
 import { makePOSTRequestAuth } from './requests'
 import { GameProfile } from './gameprofile'
 import { server } from '../config'
 
   const ProfilePage = (data: any) => {
       const callFor = (game: any) => {
-          // makePOSTRequest(`${server}/newgame`, data.userdata, data.checkForGames)
           makePOSTRequestAuth(`${server}/newgame`, data.userdata, data.checkForGames, "", data.userdata.accessToken)
       }
       const games = data.retrievedGames.map((game: any) => {
@@ -20,14 +19,15 @@ import { server } from '../config'
                               unverified_move={game.unverified_move}
                               handlechoice1={data.handlechoice}/>)
       })               
-
+      
+      let {W,D,L} = JSON.parse(data.userdata.stats)
+      
       return (<div className="profile">
                   <div className="game">
-                       <div className="statistic--num">1</div><div className="statistic--word">WINS&nbsp;</div>
-                       <div className="statistic--num">1</div><div className="statistic--word">DRAWS</div>
-                       <div className="statistic--num">1</div><div className="statistic--word">LOST&nbsp;</div>
-                       <div className="statistic--num">1</div><div className="statistic--word">PLAYING</div>
-                       <div className="statistic--num">1</div><div className="statistic--word">OPEN</div>
+                       <div className="statistic--num">{W}</div><div className="statistic--word">WINS&nbsp;</div>
+                       <div className="statistic--num">{D}</div><div className="statistic--word">DRAWS</div>
+                       <div className="statistic--num">{L}</div><div className="statistic--word">LOST&nbsp;</div>
+                       <div className="statistic--num">{data.userdata.open_games}</div><div className="statistic--word">PLAYING</div>
                        <div className="button">
                <button onClick={callFor}>New Game</button>
               </div></div>

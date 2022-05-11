@@ -1,10 +1,11 @@
 const db = require("./models");
-const Role = db.role;
+// const Role = db.role;
 const Game = db.game;
-const User = db.user;
+// const User = db.user;
 
 const jwt = require("jsonwebtoken");
 const config = require("./config/auth.config.js");
+const User = require("./models/user.model");
 
 const editGame = (id, obj) => {
     Game.findOne({
@@ -20,17 +21,42 @@ const editGame = (id, obj) => {
       }}) 
 }
 
-// const endGame = (id, result) => {
-//   Game.findOne({
-//     _id: id
-//   }).exec((err, game) => {
-//       if (err) { return }
-//       switch (result) {
-//           case (result.status === "Consession") : 
-//       // {status: "Consession", loser: msg.sender}
-//       }
-//   })
-// }
+
+const AddStatToUser = (userid, stat) => {
+    User.findOne({_id: userid})
+      .exec((err, user) => {
+        let originalstat = JSON.parse(user.stats)
+        originalstat[stat] += 1
+        user.stats = JSON.stringify(originalstat)
+        user.open_games -= 1
+        user.save()
+      })
+} 
+
+const getOtherPlayer = (game, player) => {
+    if (player === game.player0id) {return game.player1id}
+    else {return game.player0id}
+}
+
+const addStatistics = (gameid, draw, winner, loser) => {
+    Game.findOne({
+        _id: gameid
+     }).exec((err, game) => {
+        if (draw) {
+            AddStatToUser(game.player1id, "D")
+            AddStatToUser(game.player0id, "D")
+        }
+        if (winner) {
+          AddStatToUser(winner, "W")
+          AddStatToUser(getOtherPlayer(game, winner), "L")
+        }
+        if (loser) {
+          AddStatToUser(loser, "L")
+          AddStatToUser(getOtherPlayer(game, loser), "W")
+        }
+     })
+
+}
 
 exports = module.exports = function(io){
     io.use((socket, next) => {
@@ -64,6 +90,7 @@ exports = module.exports = function(io){
                             status: "Ended", 
                             gameasjson: JSON.stringify(gameasjson1),
                             draw_proposed: ""})
+          addStatistics(msg.gameid, true)                  
           // io.to(msg.id).emit("connectaaa", `connected to ${msg.id}`);                  
           io.to(msg.gameid).emit("draw_finalised", {result: "accepted"})
         })
@@ -72,22 +99,21 @@ exports = module.exports = function(io){
           client.broadcast.to(msg.gameid).emit("draw_finalised", {result: "declined"})
         })
         client.on("concede", (msg) => {
-          // endGame(msg.gameid, {status: "Consession", loser: msg.sender})
-          // console.log("CONCESSION", msg)
           editGame(msg.gameid, {result: JSON.stringify({draw: false, loser: msg.sender, by: "Concession"}), status: "Ended"})
           // data.socket.emit("concede", {id: data.game.id, token: data.token})
+          addStatistics(msg.gameid, null, null, msg.sender)   
           client.broadcast.to(msg.gameid).emit("other_player_has_conceded", msg)
-          // io.to(msg.id).emit("draw_finalised", msg)
         });    
         client.on("move verified", (msg) => { 
-          // console.log("move verified")
           let curgame  = JSON.parse(msg.gameasjson)
           if (curgame.status === "Checkmate") {
               editGame(msg.move.gameid, {result: JSON.stringify({draw: false, winner: msg.move.sender, by: "Checkmate"}), status: "Ended"})
+              addStatistics(msg.gameid, null, msg.move.sender, null) 
               return;
           }
           if (curgame.status === "Stalemate") {
             editGame(msg.move.gameid, {result: JSON.stringify({draw: true, by: "Stalemate"}), status: "Stalemate"})
+            addStatistics(msg.gameid, true) 
             return;
         }
             Game.findOne({

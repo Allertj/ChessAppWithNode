@@ -6,7 +6,7 @@ import { DndProvider } from 'react-dnd'
 import { HTML5Backend } from 'react-dnd-html5-backend'
 
 const figures = [new Map([["Q", "♕"], ["M", "♔"], ["R", "♖"],["K", "♘"], ["B", "♗"], ["P", "♙"]]),
-    new Map([["Q", "♛"], ["M", "♚"], ["R", "♜"],["K", "♞"], ["B", "♝"], ["P", "♟"]])
+                 new Map([["Q", "♛"], ["M", "♚"], ["R", "♜"],["K", "♞"], ["B", "♝"], ["P", "♟"]])
                  ]
               
 const XY = (target : string) => {

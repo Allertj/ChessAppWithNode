@@ -203,9 +203,9 @@ td:hover {
 }
 
 #choose {
-  /* visibility: hidden; */
   position: absolute;
   top: 50%;
+  z-index: 1;
   left: 50%;
   height: 200px;
   width: 500px;

@@ -1,7 +1,7 @@
 import React from 'react'
 import { makePOSTRequest } from './requests'
 import { server } from '../config'
-import { useFetch, usePOSTFetch } from './might_be_useful'
+// import { useFetch, usePOSTFetch } from './might_be_useful'
 import { useNavigate } from "react-router-dom";
 
 const LoginScreen = (data:any) => {
@@ -19,13 +19,9 @@ const LoginScreen = (data:any) => {
       navigate("/profile", { replace: true });
     }
   }
-  const submitForm = (event: any) => {
+  const submitForm = async (event: any) => {
     event.preventDefault()
-    // let { loading, data, error } = usePOSTFetch(`${server}/api/auth/signin`, formData)
-    // console.log("submtiform", loading, data, error)
     makePOSTRequest(`${server}/api/auth/signin`, formData, handleRequest, "")  
-    // loginUser(formData, handleRequest)
-    // { loading, data, error }
 }
   const setData = (data: any) => {
     setFormData(prevState => {
@@ -38,10 +34,9 @@ const LoginScreen = (data:any) => {
             <form onSubmit={submitForm}>
               <div className='center-form'><label>Email</label></div>
               <div><input type="text" name="username" onChange={setData} value={formData.username}/></div>
-              <div>{messages}</div>
               <div className='center-form'><label>Password</label></div>
               <div><input type="text" name="password" onChange={setData} value={formData.password}/></div>
-              {/* <div>{data.messages.passwordmsg}</div> */}
+              <div>{messages}</div>
               <div className='center-form'><button type="submit">Login</button></div>
             </form>
           </div>)

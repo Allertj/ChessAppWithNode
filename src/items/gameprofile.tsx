@@ -18,7 +18,6 @@ const GameProfile = (data1: any) => {
     }
     const startGame = () => {
         makeGETRequestAuth(`${server}/requestgamedata/${data1.number}`, loadGame, "", data1.userdata.accessToken) 
-        // makeGETRequest(`${server}/requestgamedata/${data1.number}`, loadGame)
     }   
 
     let gameopen = (data1.status === "Ended" || data1.status === "Open")    

@@ -12,17 +12,17 @@ const makePOSTRequest = (address: string, body: any, callback: (data: any)=> voi
         else { callback(data)}})      
   }
   
-const makeGETRequest = (address: string, callback: (data: any) => void, attr: string) => {  
-    const requestOptions = {
-      method: 'GET',
-      headers: { 'Content-Type': 'application/json' }
-    };
-    fetch(address, requestOptions)
-      .then(response => response.json() )
-      .then(data => { 
-        if (attr) { callback(data[attr]) } 
-        else { callback(data)}});         
-  }
+// const makeGETRequest = (address: string, callback: (data: any) => void, attr: string) => {  
+//     const requestOptions = {
+//       method: 'GET',
+//       headers: { 'Content-Type': 'application/json' }
+//     };
+//     fetch(address, requestOptions)
+//       .then(response => response.json() )
+//       .then(data => { 
+//         if (attr) { callback(data[attr]) } 
+//         else { callback(data)}});         
+//   }
 
   const makeGETRequestAuth = (address: string, callback: (data: any) => void, attr: string, token: string) => {  
     const requestOptions = {
@@ -30,7 +30,6 @@ const makeGETRequest = (address: string, callback: (data: any) => void, attr: st
       headers: { 'Content-Type': 'application/json',
                  "x-access-token": token}
     };
-    // console.log("requestoptions", requestOptions);
     fetch(address, requestOptions)
       .then(response => response.json() )
       .then(data => { 
@@ -53,4 +52,4 @@ const makeGETRequest = (address: string, callback: (data: any) => void, attr: st
          
   }
 
-export { makeGETRequest, makePOSTRequest, makeGETRequestAuth, makePOSTRequestAuth}
+export { makePOSTRequest, makeGETRequestAuth, makePOSTRequestAuth}

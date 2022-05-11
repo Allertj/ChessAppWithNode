@@ -9,12 +9,14 @@ const SideBar = (data: any) => {
         data.setStatus("You have conceded")
         data.concede()
     }
-
+    let conditions = ["Playing", "Promotion", "Check"]
+    let concedestring = conditions.includes(data.status) ? "CONCEDE" : ""
+    let proposedrawstring = conditions.includes(data.status) ? "PROPOSE DRAW" : ""
     return (
       <div className="sidebar flex-child">
         <div className='flex-container'>
-        <div className='column sidebar-option' onClick={concede}>CONCEDE</div> 
-        <div className='column sidebar-option' onClick={data.proposeDraw}>PROPOSE DRAW</div>          
+        <div className='column sidebar-option' onClick={concede}>{concedestring}</div> 
+        <div className='column sidebar-option' onClick={data.proposeDraw}>{proposedrawstring}</div>          
         </div>
         <div className="moves">STATUS:</div>
           <div id="caller">{data.status}</div>

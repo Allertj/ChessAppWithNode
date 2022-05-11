@@ -1,7 +1,7 @@
 const config = require("../config/auth.config");
 
 const crypto = require("crypto");
-const startgame = require('./standardgame')
+const startgame = require('./standardgame.ts')
 
 const db = require("../models");
 const User = db.user;
@@ -88,6 +88,7 @@ const signin = (req, res) => {
       }
       res.status(200).send({
         id: user._id,
+        stats: user.stats,
         username: user.username,
         email: user.email,
         roles: authorities,
