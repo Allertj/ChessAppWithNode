@@ -1,5 +1,5 @@
 import React from 'react'
-import { makePOSTRequest, makePOSTRequestAuth } from './requests'
+import { makePOSTRequestAuth } from './requests'
 import { GameProfile } from './gameprofile'
 import { server } from '../config'
 
@@ -16,6 +16,7 @@ import { server } from '../config'
                               status={game.status}
                               userdata={data.userdata}
                               gamedata={game.gameasjson}
+                              draw_proposed={game.draw_proposed}
                               unverified_move={game.unverified_move}
                               handlechoice1={data.handlechoice}/>)
       })               

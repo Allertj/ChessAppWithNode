@@ -11,8 +11,6 @@ class Game {
     board : Array<Array<Piece | null>> = []
     turn : Player =  Player.BLACK
     id : number = 0
-    // player0id : number = 0
-    // player1id : number = 0
     color: number = 2
     status = status1.PLAYING
     passed_pawn = new Map()
@@ -21,11 +19,9 @@ class Game {
     promotion = {x : 8, y : 8, player : 2}
     latest_poss: Array<[number, number]>= []
     moves = []
-    // result = {winner: 0, loser: 0, draw: false, result: false}
     movescount = 0
-    last_selected = []
+    last_selected : Array<number>= []
     constructor(gameInfo: string="") {
-        console.log("INIT FIRED")
         if (this.board.length === 0) {
             this.buildBoard(gameInfo)
         }
@@ -44,14 +40,13 @@ class Game {
         this.status = status1.CONCEDED
     }
     drawGame() {
-        console.log("DRAWGAME FIRED")
         this.status = status1.DRAW
     }
     getMoves() {
         let result = []
         let players = new Map([[1, "WHITE"], [0, "BLACK"]])
         let letter = new Map([[7, "A"], [6, "B"], [5, "C"], [4, "D"], [3, "E"], [2, "F"], [1, "G"], [0, "H"]])
-        for (let [player, x, y, destx, desty, count, strike, piece] of this.moves) {
+        for (let [player, x, y, destx, desty,, strike, piece] of this.moves) {
             result.push({player: players.get(player), 
                          piece: piece, 
                          notation: letter.get(y)+(x+1).toString()+strike+letter.get(desty)+(destx+1).toString()})
@@ -83,7 +78,6 @@ class Game {
         }
         if (!forlegal) {
             this.latest_poss = temp
-                    //@ts-expect-error
             this.last_selected = [x, y]
         }
         return temp;

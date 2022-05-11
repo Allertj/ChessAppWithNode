@@ -8,7 +8,7 @@ import { Register} from './items/register'
 import { makeGETRequestAuth} from './items/requests'
 import { server } from './config'
 import { createSocket }from './items/createsocket'
-import { Routes, Route, Navigate, useNavigate } from "react-router-dom";
+import { Routes, Route, useNavigate } from "react-router-dom";
 
 const Page = () => {
   let [retrievedGames, setRetrievedGames] = React.useState([])
@@ -29,6 +29,7 @@ const Page = () => {
   const checkForGames = () => {
     //@ts-expect-error
       makeGETRequestAuth (`${server}/profile/${userdata.id}`, loadProfile, "", userdata.accessToken)
+      navigate("/profile", { replace: true });
   }
 
   const chooseGame = (gameasjson: JSON) => {
@@ -54,11 +55,10 @@ const Page = () => {
 
 
   let standard =  Object.keys(userdata).length === 0 ? <LoginScreen login={loginthesite}/> : profile
-  console.log(Object.keys(userdata).length === 0, "standard") 
   return (<div className="main-container">
             
             <NavBar handleLogout={handleLogout} 
-                    profile={checkForGames} 
+                    checkForGames={checkForGames} 
                     userdata={userdata}/> 
             <Routes>
                 <Route path="/" 

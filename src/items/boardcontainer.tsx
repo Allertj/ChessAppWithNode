@@ -4,7 +4,6 @@ import { SideBar } from './sidebar'
 import { replacer } from './helper'
 import { Popup } from './promotion'
 import { ProposeDraw } from './proposedraw';
-import {status1} from "../chess/misc"
 
 const BoardContainer = (gameid: any) => {
     const [board, setBoard] = React.useState(() => {return gameid.game.board})
@@ -13,23 +12,16 @@ const BoardContainer = (gameid: any) => {
     const [status, setStatus] = React.useState(() => {return gameid.game.status})
     const [moves, setMoves] = React.useState(() => {return gameid.game.getMoves()})
 
-
     const verifyMove = (msg: any) => {
-        // React.useEffect(() => {
-            //@ts-expect-error
-        let res = gameid.game.getPossibilities(msg.color, msg.x, msg.y).map(([x,y])=> XYString(x,y))
+        let res = gameid.game.getPossibilities(msg.color, msg.x, msg.y).map(([x,y]: Array<number>)=> XYString(x,y))
         if (res.includes(XYString(msg.destx, msg.desty))) {
             gameid.game.makeMove(gameid.game.board, msg.x, msg.y, msg.destx, msg.desty)
-            //@ts-expect-error
-            document.getElementById(XYString(msg.destx, msg.desty)).click()
+            document.getElementById(XYString(msg.destx, msg.desty))?.click()
             let newmsg = {move: msg, 
                           gameasjson: JSON.stringify(gameid.game, replacer),
                           token: gameid.token}
-
             gameid.socket.emit("move verified", newmsg)
-
         }
-        // }, []);
     }
     React.useEffect(() => {
         gameid.socket.on("othermove", (msg: any) => {
@@ -46,14 +38,15 @@ const BoardContainer = (gameid: any) => {
         })
         gameid.socket.on("draw_finalised", (msg: any) => {
             if (msg.result === "accepted") {
-                // gameid.game.status = status1.DRAW
-                // gameid.game.turn = 2
-                // gameid.game.player1id = 342
                 setStatus("Draw")
                 gameid.game.drawGame()
-                console.log("DRAW FINALISED FIRED", gameid.game)
+                // console.log("DRAW FINALISED FIRED", gameid.game)
             }
-            // console.log("draw finalised in boardcontainer", msg.result === "accepted")
+        })
+        gameid.socket.on("other_player_has_conceded", (msg: any) => {
+            // console.log("other player has conceeded")
+            setStatus("Other player has conceeded")
+            gameid.game.concedeGame()
         })
     }, [gameid.socket])
 
@@ -65,21 +58,19 @@ const BoardContainer = (gameid: any) => {
     }
 
     const updateFromBoard = ([x, y]: Array<any>) => {
-        console.log("updateFromBoard", gameid.game.status)
+        if (status === "Draw" || status === "Conceded" || status === "You ") {return }
         if (!options.includes(XYString(x, y))) {
             gameid.game.getPossibilities(Number(gameid.game.color), x, y)
             
         } else {
             gameid.game.makeMove(gameid.game.board, highlighted[0],highlighted[1], x, y)
             gameid.socketsend({type: "move", content: [highlighted[0],highlighted[1], x, y], token: gameid.token})
-            // data.socket.emit("move", {...obj, gameid: game.id, color: game.color, sender: data.userdata.id})
         }       
         setBoard(gameid.game.board)
         setOptions(gameid.game.latest_poss_as_string)
         setHighlighted(gameid.game.last_selected)
         setStatus(gameid.game.status)
         setMoves(gameid.game.getMoves())
-        // const draw
     }
     return <div className="flex-container"><SideBar moves={moves} 
                                                     concede={gameid.concede}

@@ -1,7 +1,7 @@
 import { Link } from "react-router-dom";
 
 const NavBar = (data: any) => {
-    const loggedinmenu =   <ul className="nav-item"><li> <Link className="link" to="profile">Profile</Link></li>
+    const loggedinmenu =   <ul className="nav-item"><li onClick={data.checkForGames}>Profile</li>
                                                     <li onClick={data.handleLogout}>Logout</li></ul>
     const loggedoutmenu =  <ul className="nav-item"><li><Link className="link" to="login">Login</Link></li>
                                                     <li><Link className="link" to="register">Register</Link></li></ul>
