@@ -52,7 +52,7 @@ const BoardContainer = (gameid: any) => {
     const askPromotePiece = (piece: any) => {
         gameid.socket.emit("promotion", {piece: piece, 
                                          token: gameid.token,
-                                         id: gameid.game.id, 
+                                         gameid: gameid.game.id, 
                                          ...gameid.game.promotion})   
     }
 

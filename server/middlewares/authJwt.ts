@@ -1,16 +1,19 @@
-const jwt = require("jsonwebtoken");
-const config = require("../config/auth.config.js");
-const db = require("../models");
+// const jwt = require("jsonwebtoken");
+import jwt from 'jsonwebtoken';
+import { config } from "../config/auth.config";
+// const db = require("../models");
+import {db} from "../models"
+import Express from 'express'
 const User = db.user;
 const Role = db.role;
 
 
-verifyToken = (req, res, next) => {
+const verifyToken = (req : any, res : any, next : any) => {
   let token = req.headers["x-access-token"];
   if (!token) {
     return res.status(403).send({ message: "No token provided!" });
   }
-  jwt.verify(token, config.secret, (err, decoded) => {
+  jwt.verify(token, config.secret, (err: any, decoded: any) => {
     if (err) {
       return res.status(401).send({ message: "Unauthorized!" });
     }
@@ -18,7 +21,7 @@ verifyToken = (req, res, next) => {
     next();
   });
 };
-isAdmin = (req, res, next) => {
+const isAdmin = (req : any, res : Express.Response, next : ()=>{}) => {
   User.findById(req.userId).exec((err, user) => {
     if (err) {
       res.status(500).send({ message: err });
@@ -28,7 +31,7 @@ isAdmin = (req, res, next) => {
       {
         _id: { $in: user.roles }
       },
-      (err, roles) => {
+      (err : any, roles: any) => {
         if (err) {
           res.status(500).send({ message: err });
           return;
@@ -45,7 +48,7 @@ isAdmin = (req, res, next) => {
     );
   });
 };
-isModerator = (req, res, next) => {
+const isModerator = (req : any, res : Express.Response, next : ()=>{}) => {
   User.findById(req.userId).exec((err, user) => {
     if (err) {
       res.status(500).send({ message: err });
@@ -55,7 +58,7 @@ isModerator = (req, res, next) => {
       {
         _id: { $in: user.roles }
       },
-      (err, roles) => {
+      (err: any, roles: any) => {
         if (err) {
           res.status(500).send({ message: err });
           return;
@@ -77,4 +80,6 @@ const authJwt = {
   isAdmin,
   isModerator
 };
-module.exports = authJwt;
+
+export { authJwt };
+// module.exports = authJwt;

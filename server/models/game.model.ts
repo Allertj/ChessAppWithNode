@@ -1,4 +1,5 @@
-const mongoose = require("mongoose");
+import mongoose from "mongoose";
+
 const Game = mongoose.model(
   "Game",
   new mongoose.Schema({
@@ -13,4 +14,5 @@ const Game = mongoose.model(
     gameasjson: String,
   })
 );
-module.exports = Game;
+
+export { Game }

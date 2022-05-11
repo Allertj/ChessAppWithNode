@@ -1,4 +1,4 @@
-const game = `{
+const newgame = `{
 	"board": [
 	  [
 		{
@@ -300,4 +300,4 @@ const game = `{
 	"last_selected": []
 }`
 
-module.exports = { game}
+export { newgame }

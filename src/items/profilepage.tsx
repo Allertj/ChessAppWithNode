@@ -20,13 +20,13 @@ import { server } from '../config'
                               handlechoice1={data.handlechoice}/>)
       })               
       
-      let {W,D,L} = JSON.parse(data.userdata.stats)
+      // let {W,D,L} = JSON.parse(data.userdata.stats)
       
       return (<div className="profile">
                   <div className="game">
-                       <div className="statistic--num">{W}</div><div className="statistic--word">WINS&nbsp;</div>
-                       <div className="statistic--num">{D}</div><div className="statistic--word">DRAWS</div>
-                       <div className="statistic--num">{L}</div><div className="statistic--word">LOST&nbsp;</div>
+                       <div className="statistic--num">{1}</div><div className="statistic--word">WINS&nbsp;</div>
+                       <div className="statistic--num">{2}</div><div className="statistic--word">DRAWS</div>
+                       <div className="statistic--num">{2}</div><div className="statistic--word">LOST&nbsp;</div>
                        <div className="statistic--num">{data.userdata.open_games}</div><div className="statistic--word">PLAYING</div>
                        <div className="button">
                <button onClick={callFor}>New Game</button>

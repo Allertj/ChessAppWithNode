@@ -35,7 +35,7 @@ const MainContainer = (data: any) => {
             } 
         }, [data, game])                  
         React.useEffect(() => {           
-            data.socket.emit("initiate", {id: game.id})
+            data.socket.emit("initiate", {gameid: game.id})
         }, [data.socket, game.id]);
         
         const socketSend = (data1: any) => {
