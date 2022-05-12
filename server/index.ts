@@ -1,8 +1,7 @@
 import express from 'express';
 import cors from 'cors';
 import http from 'http';
-import { dbConfig } from '../src/config' 
-import {PORT} from '../src/config'
+import { dbConfig, PORT, DBADDRESS } from '../src/config' 
 
 let app = express();
 let server = http.createServer(app)
@@ -31,22 +30,21 @@ startSocket(io)
 import {initial} from './initiatedb'
 import {db} from './models'
 
-  const startDatabase = () => {
-    try {
-        db.mongoose.connect(`mongodb://${dbConfig.HOST}:${dbConfig.PORT}/${dbConfig.DB}`, {
-        //@ts-expect-error
-        useNewUrlParser: true,
-        useUnifiedTopology: true})
-        console.log("Successfully connect to MongoDB.");
-        initial();
-    } catch(err :any) {
-        console.error("Connection error", err);
-        process.exit();
-    }
-  }
+db.mongoose
+    .connect(DBADDRESS, {
+    //@ts-expect-error
+    useNewUrlParser: true,
+    useUnifiedTopology: true
+  })
+  .then(() => {
+    console.log("Successfully connect to MongoDB.");
+    initial();
+  })
+  .catch(err => {
+    console.error("Connection error", err);
+    process.exit();
+  });
 
-
-startDatabase()
 server.listen(PORT, ()=>{
   console.log("Application running successfully on port: "+PORT);
 });

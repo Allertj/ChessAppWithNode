@@ -3,6 +3,7 @@ import { BoardContainer } from './boardcontainer'
 import { Game } from '../chess/game'
 import { XYString } from './board'
 import { replacer } from './helper';
+import { createSocket } from './createsocket';
 
 const verifyMove = (data: any, game: any, socket: any) => {
     let msg = JSON.parse(data.gamedata.unverified_move)
@@ -25,7 +26,7 @@ const verifyMove = (data: any, game: any, socket: any) => {
 const MainContainer = (data: any) => {      
         const [drawproposed, setDrawProposed] = React.useState(() => {return false})
         const game = Object.assign(new Game(), data.gamedata)
-
+        let socket = React.useRef(createSocket(data.userdata.accessToken, data.userdata.id))
         React.useEffect(() => {
             if (data.gamedata.unverified_move) {
                 verifyMove(data, game, data.socket)
@@ -35,13 +36,13 @@ const MainContainer = (data: any) => {
             } 
         }, [data, game])                  
         React.useEffect(() => {           
-            data.socket.emit("initiate", {gameid: game.id})
-        }, [data.socket, game.id]);
+            socket.current.emit("initiate", {gameid: game.id})
+        }, [game.id]);
         
         const socketSend = (data1: any) => {
             let o = {x:0, y:0, destx:0, desty:0, token:""}
             const obj = ([o.x, o.y, o.destx, o.desty, o.token] = data1.content, o)
-            data.socket.emit("move", {...obj, 
+            socket.current.emit("move", {...obj, 
                                       gameid: game.id, 
                                       color: game.color, 
                                       sender: data.userdata.id})
@@ -50,23 +51,23 @@ const MainContainer = (data: any) => {
             game.concedeGame({gameid: game.id, 
                               color: game.color, 
                               sender: data.userdata.id})
-            data.socket.emit("concede", {gameid: game.id, 
+            socket.current.emit("concede", {gameid: game.id, 
                                          color: game.color, 
                                          sender: data.userdata.id})
         }
         const proposeDraw = () => {   
-            data.socket.emit("propose_draw", {gameid: game.id, 
+            socket.current.emit("propose_draw", {gameid: game.id, 
                                               sender: data.userdata.id})
     
         }
         const drawAnswer = (drawAnswer: boolean) => {
             setDrawProposed(false)
             if (drawAnswer) {         
-                data.socket.emit("draw_accepted", {gameid: game.id, 
+                socket.current.emit("draw_accepted", {gameid: game.id, 
                                                    sender:data.userdata.id, 
                                                    gameasjson: JSON.stringify(game, replacer)})         
             } else {
-                data.socket.emit("draw_declined", {gameid: game.id, 
+                socket.current.emit("draw_declined", {gameid: game.id, 
                                                    sender:data.userdata.id})
             }
         }
@@ -77,7 +78,7 @@ const MainContainer = (data: any) => {
                                 concede={concede}
                                 drawproposed={drawproposed}
                                 setDrawProposed={setDrawProposed}
-                                socket={data.socket}
+                                socket={socket.current}
                                 token={data.userdata.accessToken}
                                 // active={data.active} 
                                 socketsend={socketSend}/>)

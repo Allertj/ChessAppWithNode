@@ -1,12 +1,10 @@
-import crypto from 'crypto';
+// import crypto from 'crypto';
 import {newgame} from './standardgame'
 import {db} from '../models'
 const Game = db.game;
 
 const createNewGameinDB = async (player0id: String) => {
-    const id = crypto.randomBytes(16).toString("hex");
     const game = new Game({
-      gameid: id,
       player0id: player0id,
       player1id: "0",
       gameasjson: newgame,
@@ -14,7 +12,7 @@ const createNewGameinDB = async (player0id: String) => {
     });
     try {
         let saved = await game.save()
-        return id
+        return saved._id.toString()
     } catch (err) {
         return err
     }
@@ -41,7 +39,7 @@ const startGame = async (req: any, res: any, game:any, user: any) => {
         game.status = "Playing"
         game.player1id = req.body.id  
         await game.save()
-        user.open_games_ids.push(game._id)
+        user.open_games_ids.push(game._id.toString())
         user.total_games += 1
         await user.save()  
         res.send({ response: "Joined New Game. Ready to play" }).status(200);

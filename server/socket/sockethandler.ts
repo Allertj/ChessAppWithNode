@@ -1,11 +1,9 @@
 import  Jwt  from 'jsonwebtoken'
-// import { config } from './config/auth.config'
 import { config } from "../../src/config"
 import { addStatistics, editGame } from '../controllers/gamestats.controller';
-import {db} from "../models"
+import { db } from "../models"
 
 const Game = db.game;
-// const User = db.user;
 
 interface GameModel {
   player0id: String,

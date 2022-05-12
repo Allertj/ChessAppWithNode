@@ -1,5 +1,3 @@
-import React from 'react';
-// import { figures } from './locations'
 import { Piece } from './queen'
 import { useDrop } from 'react-dnd'
 import { DndProvider } from 'react-dnd'
@@ -82,7 +80,7 @@ const Cell = (data: any) => {
     const dummy = (data1: any) => {
         data.signalMove(XY(" " + data1))
     }
-    const [{ isOver, canDrop }, drop] = useDrop(
+    const [, drop] = useDrop(
         () => ({
           accept: "Piece",
           drop: () => data.signalMove(XY(" " + data.id)),

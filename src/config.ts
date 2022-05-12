@@ -14,4 +14,13 @@ const dbConfig = {
     DB: "chessapp"
 };
 
-export { server, PORT, MAX_OPEN_GAMES, MAX_TOTAL_GAMES, config, dbConfig } 
+const DockerDB = {
+  HOST: "mongo",
+  PORT: 27021,
+  DB: "chessapp"
+};
+
+  // const DBADDRESS = `mongodb://${dbConfig.HOST}:${dbConfig.PORT}/${dbConfig.DB}`
+  const DBADDRESS = `mongodb://${DockerDB.HOST}:${DockerDB.PORT}/${DockerDB.DB}`
+
+export { server, PORT, MAX_OPEN_GAMES, MAX_TOTAL_GAMES, config, dbConfig, DBADDRESS } 

@@ -11,6 +11,10 @@ const Game = db.game;
 const User = db.user;
 
 const chessRoutes = (app: any) => {
+    app.get("/checkout", (req: any, res : any) => {
+        res.send("SERVER WORKING PROPERLY")
+        res.end()
+    })
     app.post("/api/auth/signup",  [
         checkDuplicateUsername,
         checkDuplicateEmail,

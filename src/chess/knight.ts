@@ -1,5 +1,5 @@
 import { Piece} from './piece'
-import { Player, linemaker } from './misc'
+import { Player } from './misc'
 
 class Knight extends Piece {
     constructor(x: number, y: number, player: Player, moved: boolean = false) {

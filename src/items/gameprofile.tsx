@@ -12,7 +12,6 @@ const GameProfile = (data1: any) => {
         gamedata.unverified_move = data1.unverified_move
         gamedata.draw_proposed = data1.draw_proposed
         data1.handlechoice1(gamedata)
-        console.log("gamedata", data1)
         navigate("/game", { replace: true });
 
     }

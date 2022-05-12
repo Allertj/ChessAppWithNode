@@ -25,13 +25,13 @@ const SideBar = (data: any) => {
                 <div className='row'>
                   <div className='column'>
                     <div className='blue-column'>
-                      <div className='moves-title'>WHITE</div>
+                      <div className='moves-title'>BLACK</div>
                       {white}
                     </div>
                   </div>
                   <div className='column'>
                     <div className='green-column'>
-                      <div className='moves-title'>BLACK</div>
+                      <div className='moves-title'>WHITE</div>
                       {black}
                   </div>
                 </div>

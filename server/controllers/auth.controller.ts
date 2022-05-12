@@ -38,7 +38,6 @@ const signup = (req : Express.Request, res : Express.Response) => {
     total_games: 0,
     password: bcrypt.hashSync(req.body.password, 8)
   });
-
   user.save((err: any, user: DBUser) => {
     if (err) {
       res.status(500).send({ message: err });
