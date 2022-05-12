@@ -13,13 +13,17 @@ const userRoutes = (app: any) => {
     );
     next();
   });
+  
   app.get("/api/test/all", allAccess);
+
   app.get("/api/test/user", [authJwt.verifyToken], userBoard);
+  
   app.get(
     "/api/test/mod",
     [authJwt.verifyToken, authJwt.isModerator],
     moderatorBoard
   );
+  
   app.get(
     "/api/test/admin",
     [authJwt.verifyToken, authJwt.isAdmin],

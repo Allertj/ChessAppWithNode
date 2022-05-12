@@ -1,17 +1,14 @@
 import jwt from 'jsonwebtoken'
 import bcrypt from 'bcryptjs'
-
-import { config } from "../config/auth.config"
-import crypto from 'crypto';
-import {newgame} from './standardgame'
-import {db} from '../models'
+import { config } from "../../src/config"
+import { db } from '../models'
 import Express from 'express'
 import mongoose from "mongoose";
 import { Document} from "mongoose";
 
 const User = db.user;
 const Role = db.role;
-const Game = db.game;
+// const Game = db.game;
 
 interface DBRole extends Document {
   name: String
@@ -120,39 +117,6 @@ const signin = (req : Express.Request, res : Express.Response) => {
     });
 };
 
-// const retrieveGameFromDb = (req, res) => {
-//   Game.findOne({
-//     gameid: req.body.gameid
-//   }).exec((err, gameid) => {
-//   if (err) {
-//     res.status(500).send({ message: err });
-//     return;
-//   }
-//   if (!gameid) {
-//     return res.status(404).send({ message: "game not found." });
-//   }
-//   if (gameid) {
-//     return res.status(200).send({
-//       gameid: gameid._id,
-//       player1id: gameid.player1id,
-//       player0id: gameid.player0id,
-//       status: gameid.status,
-//       gameasjson: gameid.gameasjson,
-//     })}
-//   });
-// }
 
-const createNewGameinDB = (player0id: String, callback: any) => {
-  const id = crypto.randomBytes(16).toString("hex");
-  const game = new Game({
-    gameid: id,
-    player0id: player0id,
-    player1id: "0",
-    gameasjson: newgame,
-    status: "Open"
-  });
-  game.save(callback)
 
-}
-
-export { signup, signin, createNewGameinDB}
+export { signup, signin}

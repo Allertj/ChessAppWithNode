@@ -4,8 +4,6 @@ import './index.css';
 import { Page } from './App';
 import reportWebVitals from './reportWebVitals';
 import { BrowserRouter as Router } from "react-router-dom";
-// import { createContext } from 'react'
-// export const ColorContext = createContext();
 
 const root = ReactDOM.createRoot(
   document.getElementById('root') as HTMLElement

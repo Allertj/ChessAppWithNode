@@ -1,4 +1,4 @@
-import { checkDuplicateUsernameOrEmail, checkRolesExisted } from "../middlewares/verifySignUp";
+import { checkDuplicateUsername, checkDuplicateEmail, checkRolesExisted } from "../middlewares/verifySignUp";
 import { signup, signin } from "../controllers/auth.controller";
 import Express from 'express';
 
@@ -9,7 +9,8 @@ const authRoutes = (app: any) => {
    });
   app.post("/api/auth/signup",
     [
-      checkDuplicateUsernameOrEmail,
+      checkDuplicateUsername,
+      checkDuplicateEmail,
       checkRolesExisted
     ],
     signup
