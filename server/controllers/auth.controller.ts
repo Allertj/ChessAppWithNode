@@ -20,7 +20,6 @@ interface DBUser extends Document{
   id : String,
   stats : String,
   open_games: Number,
-  total_games: Number,
   open_games_ids: [],
   roles: [
     {
@@ -35,7 +34,6 @@ const signup = (req : Express.Request, res : Express.Response) => {
     username: req.body.username,
     email: req.body.email,
     open_games: 0,
-    total_games: 0,
     password: bcrypt.hashSync(req.body.password, 8)
   });
   user.save((err: any, user: DBUser) => {
@@ -110,6 +108,7 @@ const signin = (req : Express.Request, res : Express.Response) => {
         stats: user.stats,
         username: user.username,
         email: user.email,
+        open_games: user.open_games,
         roles: authorities,
         accessToken: token
       });

@@ -34,7 +34,8 @@
     "web-vitals": "^2.1.4"
   },
   "scripts": {
-    "server1": "node --no-warnings --loader ts-node/esm server/index.ts",
+    "server2": "node --no-warnings --loader ts-node/esm server/index.ts",
+    "server1": "node --loader ts-node/esm server/index.ts",
     "server": "npx ts-node server/index.ts",
     "start": "react-scripts start",
     "build": "react-scripts build",

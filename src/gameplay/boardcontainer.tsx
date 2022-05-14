@@ -1,7 +1,7 @@
 import React from 'react';
 import { Board , XYString, ReverseBoard } from './board';
-import { SideBar } from './sidebar'
-import { replacer } from './helper'
+import { SideBar } from '../items/sidebar'
+import { replacer } from '../misc/helper'
 import { Popup } from './promotion'
 import { ProposeDraw } from './proposedraw';
 

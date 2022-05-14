@@ -29,13 +29,14 @@ const editGame = async (id: String, obj: any) => {
     }
   }
   
-  const AddStatToUser = (userid: String, stat: any) => {
+  const AddStatToUser = (userid: String, stat: any, gameid: String) => {
       User.findOne({_id: userid})
         .exec((err, user) => {
           let originalstat = JSON.parse(user.stats)
           originalstat[stat] += 1
           user.stats = JSON.stringify(originalstat)
           user.open_games -= 1
+          user.open_games_ids = user.open_games_ids.filter((number: String) => { return number !== gameid;});          
           user.save()
         })
   } 
@@ -50,16 +51,16 @@ const editGame = async (id: String, obj: any) => {
           _id: gameid
        }).exec((err: any, game: GameModel) => {
           if (draw) {
-              AddStatToUser(game.player1id, "D")
-              AddStatToUser(game.player0id, "D")
+              AddStatToUser(game.player1id, "D", gameid)
+              AddStatToUser(game.player0id, "D", gameid)
           }
           if (winner) {
-            AddStatToUser(winner, "W")
-            AddStatToUser(getOtherPlayer(game, winner), "L")
+            AddStatToUser(winner, "W", gameid)
+            AddStatToUser(getOtherPlayer(game, winner), "L", gameid)
           }
           if (loser) {
-            AddStatToUser(loser, "L")
-            AddStatToUser(getOtherPlayer(game, loser), "W")
+            AddStatToUser(loser, "L", gameid)
+            AddStatToUser(getOtherPlayer(game, loser), "W", gameid)
           }
        })
   

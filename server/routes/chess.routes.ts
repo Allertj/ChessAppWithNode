@@ -4,9 +4,9 @@ import { checkDuplicateUsername, checkDuplicateEmail, checkRolesExisted } from '
 import { signup } from "../controllers/auth.controller";
 import Express from 'express';
 import { startGame, createNewGame } from '../controllers/game.controller'
-import { MAX_OPEN_GAMES, MAX_TOTAL_GAMES } from '../../src/config'
+import { MAX_OPEN_GAMES} from '../../src/config'
 
-const Role = db.role; 
+// const Role = db.role; 
 const Game = db.game;
 const User = db.user;
 
@@ -21,11 +21,28 @@ const chessRoutes = (app: any) => {
         checkRolesExisted
     ], signup);
 
-    app.get("/profile/:id", authJwt.verifyToken, async (req : Express.Request, res : Express.Response) => {
+    app.get("/profile/:id/open", authJwt.verifyToken, async (req : Express.Request, res : Express.Response) => {
+        res.header("Access-Control-Allow-Origin", "*");
+        try {
+            let user = await User.findOne({ _id: req.params.id })
+            let games: any = []
+            for (let game of user.open_games_ids) {
+                let found = await Game.findOne({ _id: game  })
+                games.push(found) 
+            }
+            res.send(games)
+            res.end()
+        } catch (err) {
+            res.send({ response: err }).status(400);
+        }        
+    })
+
+    app.get("/profile/:id/closed", authJwt.verifyToken, async (req : Express.Request, res : Express.Response) => {
         res.header("Access-Control-Allow-Origin", "*");
         try {
             let games = await Game.find({ $or: [{ player0id: req.params.id  },
-                                                { player1id: req.params.id  }] },)
+                                                { player1id: req.params.id  }],
+                                          status: "Ended" })                                            
             res.send(games)
             res.end()
         } catch (err) {
@@ -46,7 +63,7 @@ const chessRoutes = (app: any) => {
     app.post("/newgame", authJwt.verifyToken, async (req: any, res: any) => {
         let user = await User.findOne({ username: req.body.username })
         try {
-          if (user.open_games >= MAX_OPEN_GAMES || user.total_games >= MAX_TOTAL_GAMES) {
+          if (user.open_games >= MAX_OPEN_GAMES) {
             res.send({ response: "All Slots filled" }).status(200);
             return; 
           } else {

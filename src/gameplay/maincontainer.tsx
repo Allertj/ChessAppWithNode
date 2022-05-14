@@ -2,7 +2,7 @@ import React from 'react';
 import { BoardContainer } from './boardcontainer'
 import { Game } from '../chess/game'
 import { XYString } from './board'
-import { replacer } from './helper';
+import { replacer } from '../misc/helper';
 import { createSocket } from './createsocket';
 
 const verifyMove = (data: any, game: any, socket: any) => {
@@ -31,10 +31,15 @@ const MainContainer = (data: any) => {
             if (data.gamedata.unverified_move) {
                 verifyMove(data, game, data.socket)
              }
-             if (data.gamedata.draw_proposed && JSON.parse(data.gamedata.draw_proposed).sender !== data.userdata.id) {
+
+        }, [data, game])                  
+
+        React.useEffect(() => {
+            if (data.gamedata.draw_proposed && JSON.parse(data.gamedata.draw_proposed).sender !== data.userdata.id) {
                 setDrawProposed(true)
             } 
-        }, [data, game])                  
+        }, [data.gamedata.draw_proposed, data.userdata.id])
+
         React.useEffect(() => {           
             socket.current.emit("initiate", {gameid: game.id})
         }, [game.id]);

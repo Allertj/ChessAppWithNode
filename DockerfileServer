@@ -6,12 +6,13 @@ ENV PATH /app/node_modules/.bin:$PATH
 
 COPY package.json ./
 COPY package-lock.json ./
-COPY server-package.json ./ppp.json
+# COPY server-package.json ./ppp.json
 
 RUN npm install 
-RUN mkdir -p node_modules/.cache && chmod -R 777 node_modules/.cache
+# RUN mkdir -p node_modules/.cache && chmod -R 777 node_modules/.cache
 RUN npm install react-scripts@5.0.1 -g 
 
 COPY . ./
 
+EXPOSE 5000
 CMD ["npm", "run", "server1"]

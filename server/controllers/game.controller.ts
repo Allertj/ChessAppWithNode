@@ -23,7 +23,6 @@ const createNewGameinDB = async (player0id: String) => {
     if (typeof result === "string") {
       user.open_games += 1 
       user.open_games_ids.push(result)
-      user.total_games += 1
       user.save()
       res.send({ response: "New Game started, invite open." }).status(200);
       return
@@ -39,8 +38,8 @@ const startGame = async (req: any, res: any, game:any, user: any) => {
         game.status = "Playing"
         game.player1id = req.body.id  
         await game.save()
+        user.open_games += 1 
         user.open_games_ids.push(game._id.toString())
-        user.total_games += 1
         await user.save()  
         res.send({ response: "Joined New Game. Ready to play" }).status(200);
     } catch (err) {

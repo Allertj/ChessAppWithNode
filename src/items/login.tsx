@@ -1,10 +1,9 @@
 import React from 'react'
-import { makePOSTRequest } from './requests'
+import { makePOSTRequest } from '../misc/requests'
 import { server } from '../config'
-// import { useFetch, usePOSTFetch } from './might_be_useful'
 import { useNavigate } from "react-router-dom";
 
-const LoginScreen = (data:any) => {
+const LoginScreen = (data: any) => {
   let [messages, updateMessage] = React.useState("")
   const [formData, setFormData] = React.useState({ username: "", password: "", })
   let navigate = useNavigate();

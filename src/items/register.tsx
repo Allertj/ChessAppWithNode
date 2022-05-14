@@ -1,8 +1,8 @@
 import React from 'react'
-import {makePOSTRequest} from './requests'
+import {makePOSTRequest} from '../misc/requests'
 import { server } from '../config'
 
-const Register = (data: any) => {
+const Register = () => {
     const [formData, setFormData] = React.useState({  username: "", password: "" ,email: "" })
     const [message, setMessage] = React.useState("")
       const setData = (data: any) => {
