@@ -17,11 +17,11 @@ const GameProfile = ({ gameid, status, opponent, result, loadGame }: GameProfile
     }
     let gameopen = (status === "Ended" || status === "Open")    
     return (<div className="game">
-              <div>GAME {gameid.slice(-10)}</div>
+              <div className="stat">GAME {gameid.slice(-10)}</div>
               <div className="stat">Played Against : {opponent.slice(-10)}</div>
               <div className="stat">Status : {status}</div>
               {!gameopen && <div className="button"><button onClick={chooseGame}>Resume</button></div>}
-              <div className="stat">{status === "Ended" && parseResult(result, opponent)}</div>
+              {status === "Ended" && <div className="stat"> {parseResult(result, opponent)}</div>}
             </div>)
   }
   

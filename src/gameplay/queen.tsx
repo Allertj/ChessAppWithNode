@@ -18,10 +18,9 @@ function Piece({piece, typeletter, clickfunc, id}: any) {
   }, [isDragging])
 
   return (
-    <div ref={drag}
+    <div className="internal--piece" ref={drag}
         style={{
         transform: 'translate(0, 0)',   
-        fontSize: 55,
         cursor: 'move',
       }}>{piece}</div>)
 }
