@@ -39,7 +39,7 @@
     "server2": "node --no-warnings --loader ts-node/esm server/index.ts",
     "server1": "node --loader ts-node/esm server/index.ts",
     "server": "npx ts-node server/index.ts",
-    "startSSL": "export HTTPS=true&&SSL_CRT_FILE=cert.pem&&SSL_KEY_FILE=key.pem react-scripts start",
+    "startSSL": "export HTTPS=true&&SSL_CRT_FILE=cert.crt&&SSL_KEY_FILE=key.pem react-scripts start",
     "start": "react-scripts start",
     "build": "react-scripts build",
     "test": "react-scripts test",

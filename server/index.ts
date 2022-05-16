@@ -1,12 +1,12 @@
 import express from 'express';
 import cors from 'cors';
-import http from 'http';
+import https from 'https';
 import fs from 'fs'
-// import { DBADDRESS } from '../src/config' 
-require('dotenv').config();
+import dotenv from 'dotenv';
+dotenv.config();
 
 let app = express();
-let server = http.createServer(app)
+let server = https.createServer(app)
 // add options to createServer to add certificate.
 if (process.env.USE_SSL_IN_BACKEND === "true") {
   const privateKey = fs.readFileSync(process.env.SSL_KEY_FILE as string, 'utf8');
@@ -15,8 +15,7 @@ if (process.env.USE_SSL_IN_BACKEND === "true") {
     key: privateKey,
     cert: certificate
   }
-  //@ts-expect-error  
-  let server = http.createServer(options, app)
+  server = https.createServer(options, app)
 }
 app.use(express.json());
 app.use(express.urlencoded({ extended: true }));

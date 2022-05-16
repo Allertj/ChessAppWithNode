@@ -5,12 +5,12 @@ services:
     container_name: chessapp
     build:
       context: .
-      dockerfile: Dockerfile.prod
+      dockerfile: ${DOCKERFILE_FOR_FRONTEND}
     volumes:
       - '.:/app'
       - '/app/node_modules'
     ports:
-      - ${PRODUCTION_PORT}:80
+      - ${PRODUCTION_PORT}:${INTERNAL_NGINX_PORT}
     environment:
       - CHOKIDAR_USEPOLLING=true
   backend: 
@@ -30,6 +30,6 @@ services:
     command: "mongod --port ${DBPORT}"
     container_name: 'mongo'
     environment:
-      - MONGO_INITDB_DATABASE=chessapp   
+      - MONGO_INITDB_DATABASE=${DBNAME}"
     volumes:
       - ./mongo-volume:/data/db
