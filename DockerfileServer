@@ -14,5 +14,5 @@ RUN npm install react-scripts@5.0.1 -g
 
 COPY . ./
 
-EXPOSE 5000
+EXPOSE ${REACT_APP_BACKEND_PORT}
 CMD ["npm", "run", "server1"]

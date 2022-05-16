@@ -1,6 +1,4 @@
 import jwt from 'jsonwebtoken';
-import { config } from "../../src/config"
-// import { config } from "../config/auth.config";
 import {db} from "../models"
 import Express from 'express'
 
@@ -12,7 +10,7 @@ const verifyToken = (req : any, res : any, next : any) => {
   if (!token) {
     return res.status(403).send({ message: "No token provided!" });
   }
-  jwt.verify(token, config.secret, (err: any, decoded: any) => {
+  jwt.verify(token, process.env.REACT_APP_SECRET as string, (err: any, decoded: any) => {
     if (err) {
       return res.status(401).send({ message: "Unauthorized!" });
     }

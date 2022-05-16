@@ -1,6 +1,5 @@
 import jwt from 'jsonwebtoken'
 import bcrypt from 'bcryptjs'
-import { config } from "../../src/config"
 import { db } from '../models'
 import Express from 'express'
 import mongoose from "mongoose";
@@ -96,7 +95,7 @@ const signin = (req : Express.Request, res : Express.Response) => {
           message: "Invalid Password!"
         });
       }
-      var token = jwt.sign({ id: user.id }, config.secret, {
+      var token = jwt.sign({ id: user.id }, process.env.REACT_APP_SECRET as string, {
         expiresIn: 86400 // 24 hours
       });
       var authorities = [];

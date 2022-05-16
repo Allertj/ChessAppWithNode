@@ -1,6 +1,8 @@
-const server = process.env.REACT_APP_BACKEND_ADDRESS
-const config = {
-    secret: process.env.REACT_APP_SECRET as string
-  };
+let host = window.location.host
+let protocol = window.location.protocol
+let corehost = host.substring(0, host.indexOf(':'));
+const port = process.env.REACT_APP_BACKEND_PORT
 
-export { server, config} 
+const server = `${protocol}//${corehost}:${port}`
+
+export { server } 

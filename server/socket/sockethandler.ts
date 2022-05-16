@@ -1,5 +1,4 @@
 import  Jwt  from 'jsonwebtoken'
-import { config } from "../../src/config"
 import { addStatistics, editGame } from '../controllers/gamestats.controller';
 import { db } from "../models"
 
@@ -31,7 +30,7 @@ interface SocketMessageBoard {
 
 function startSocket(io: any){
     io.use((socket : any, next: () => void) => {
-        Jwt.verify(socket.handshake.auth.token, config.secret, (err: any, decoded: any) => {
+        Jwt.verify(socket.handshake.auth.token, process.env.REACT_APP_SECRET as string, (err: any, decoded: any) => {
           if (decoded) { 
             next()
           }

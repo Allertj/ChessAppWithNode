@@ -1,12 +1,13 @@
 import express from 'express';
 import cors from 'cors';
 import https from 'https';
+import http from 'http'
 import fs from 'fs'
 import dotenv from 'dotenv';
 dotenv.config();
 
 let app = express();
-let server = https.createServer(app)
+let server = http.createServer(app)
 // add options to createServer to add certificate.
 if (process.env.USE_SSL_IN_BACKEND === "true") {
   const privateKey = fs.readFileSync(process.env.SSL_KEY_FILE as string, 'utf8');
@@ -57,7 +58,7 @@ db.mongoose
     process.exit();
   });
 
-server.listen(process.env.BACKEND_PORT, ()=>{
-  console.log("Application running successfully on port: "+process.env.BACKEND_PORT);
+server.listen(process.env.REACT_APP_BACKEND_PORT, ()=>{
+  console.log("Application running successfully on port: "+process.env.REACT_APP_BACKEND_PORT);
 });
 

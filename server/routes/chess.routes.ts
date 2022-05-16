@@ -4,7 +4,6 @@ import { checkDuplicateUsername, checkDuplicateEmail, checkRolesExisted } from '
 import { signup } from "../controllers/auth.controller";
 import Express from 'express';
 import { startGame, createNewGame } from '../controllers/game.controller'
-// import { MAX_OPEN_GAMES} from '../../src/config'
 require('dotenv').config();
 
 // const Role = db.role; 
