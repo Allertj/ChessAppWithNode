@@ -452,14 +452,14 @@ td:hover {
   }
   @media (max-width: 768px) {
     .internal--piece {
-      font-size: 10vw;
+      font-size: 9vw;
     }
   }
 
   @media (max-width: 768px) {
     .field {
-      height: 11vw;
-      width: 11vw;
+      height: 10vw;
+      width: 10vw;
     }
   }
 

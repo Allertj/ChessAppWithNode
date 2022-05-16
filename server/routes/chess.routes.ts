@@ -4,7 +4,8 @@ import { checkDuplicateUsername, checkDuplicateEmail, checkRolesExisted } from '
 import { signup } from "../controllers/auth.controller";
 import Express from 'express';
 import { startGame, createNewGame } from '../controllers/game.controller'
-import { MAX_OPEN_GAMES} from '../../src/config'
+// import { MAX_OPEN_GAMES} from '../../src/config'
+require('dotenv').config();
 
 // const Role = db.role; 
 const Game = db.game;
@@ -63,7 +64,8 @@ const chessRoutes = (app: any) => {
     app.post("/newgame", authJwt.verifyToken, async (req: any, res: any) => {
         let user = await User.findOne({ username: req.body.username })
         try {
-          if (user.open_games >= MAX_OPEN_GAMES) {
+        
+          if (user.open_games >= (process.env.MAX_OPEN_GAMES ? process.env.MAX_OPEN_GAMES: 5000)) {
             res.send({ response: "All Slots filled" }).status(200);
             return; 
           } else {

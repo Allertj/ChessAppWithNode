@@ -10,13 +10,13 @@ services:
       - '.:/app'
       - '/app/node_modules'
     ports:
-      - 1337:80
-  #   environment:
-  #     - CHOKIDAR_USEPOLLING=true
+      - ${PRODUCTION_PORT}:80
+    environment:
+      - CHOKIDAR_USEPOLLING=true
   backend: 
     container_name: backend
     expose:
-      - 5000
+      - ${BACKEND_PORT}
     build:
       context: .
       dockerfile: DockerfileServer
@@ -24,10 +24,10 @@ services:
       - '.:/app'
       - '/app/node_modules' 
     ports:
-      - 5000:5000    
+      - "${BACKEND_PORT}:${BACKEND_PORT}"
   mongo:
     image: 'mongo' 
-    command: mongod --port 27021
+    command: "mongod --port ${DBPORT}"
     container_name: 'mongo'
     environment:
       - MONGO_INITDB_DATABASE=chessapp   

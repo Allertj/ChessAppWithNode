@@ -1,10 +1,23 @@
 import express from 'express';
 import cors from 'cors';
 import http from 'http';
-import { dbConfig, PORT, DBADDRESS } from '../src/config' 
+import fs from 'fs'
+// import { DBADDRESS } from '../src/config' 
+require('dotenv').config();
 
 let app = express();
 let server = http.createServer(app)
+// add options to createServer to add certificate.
+if (process.env.USE_SSL_IN_BACKEND === "true") {
+  const privateKey = fs.readFileSync(process.env.SSL_KEY_FILE as string, 'utf8');
+  const certificate = fs.readFileSync(process.env.SSL_CRT_FILE as string, 'utf8');
+  let options ={
+    key: privateKey,
+    cert: certificate
+  }
+  //@ts-expect-error  
+  let server = http.createServer(options, app)
+}
 app.use(express.json());
 app.use(express.urlencoded({ extended: true }));
     //@ts-expect-error  
@@ -31,7 +44,7 @@ import {initial} from './initiatedb'
 import {db} from './models'
 
 db.mongoose
-    .connect(DBADDRESS, {
+    .connect(`mongodb://${process.env.DBHOST}:${process.env.DBPORT}/${process.env.DBNAME}`, {
     //@ts-expect-error
     useNewUrlParser: true,
     useUnifiedTopology: true
@@ -45,7 +58,7 @@ db.mongoose
     process.exit();
   });
 
-server.listen(PORT, ()=>{
-  console.log("Application running successfully on port: "+PORT);
+server.listen(process.env.BACKEND_PORT, ()=>{
+  console.log("Application running successfully on port: "+process.env.BACKEND_PORT);
 });
 

@@ -41,3 +41,4 @@ You don’t have to ever use `eject`. The curated feature set is suitable for sm
 
 ## Learn More
 
+https://www.globalsign.com/en/ssl-information-center/types-of-ssl-certificate/
