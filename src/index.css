@@ -49,7 +49,6 @@ td:hover {
   color: white;
 }
 
-
 .moves-container {
   padding: 10px;
   margin-top: 20px;
@@ -60,7 +59,6 @@ td:hover {
 }
 .flex-child  {
   flex: 1;
-  /* border: 2px solid yellow; */
 }  
 .moves-title {
   font-size: 20px;
@@ -84,9 +82,6 @@ td:hover {
 .form1 {
   text-align: center; 
 }
-
-
-
 
 .center-form {
   text-align: center;
@@ -188,19 +183,9 @@ td:hover {
 }
 
 @media (max-width: 768px) {
-  .main-container {
-    /* min-width: 50px; */
-    /* margin-left: auto; */
-    /* padding-left:20px; */
-    /* margin-right: auto; */
-  } 
-}
-
-@media (max-width: 768px) {
-.flex-container {
-  text-align: center;
-  /* display: flex; */
-}
+  .flex-container {
+    text-align: center;
+  }
 }
 
 @media (min-width: 768px) {
@@ -248,19 +233,17 @@ td:hover {
     background-color: white;
     box-shadow: 0px 3px 7px rgba(209, 156, 156, 0.1);
   }
-  }
+}
 
 @media (max-width: 768px) {
-.sidebar {
-  /* padding-top: 20px; */
-  display: flex;
-  padding: 20px;
-  /* min-height: 500px; */
-  align-items: center;
-  justify-content: center;
-  background-color: white;
-  box-shadow: 0px 3px 7px rgba(0, 0, 0, 0.1);
-}
+  .sidebar {
+    display: flex;
+    padding: 20px;
+    align-items: center;
+    justify-content: center;
+    background-color: white;
+    box-shadow: 0px 3px 7px rgba(0, 0, 0, 0.1);
+  }
 }
 
 @media (max-width: 768px) {
@@ -298,7 +281,6 @@ td:hover {
   padding-left: 10px;
   height: 80px;
   padding-right: 10px;
-  /* position: relative; */
   margin-top: 10px;
   background-color: white;
   box-shadow: 0px 3px 7px rgba(0, 0, 0, 0.1);
@@ -309,7 +291,6 @@ td:hover {
   .game {
     align-items: center;
     display: flex;
-    /* display:inline-block; */
     padding-left: 40px;
     padding-right: 40px;
     height: 100px;
@@ -318,150 +299,110 @@ td:hover {
     margin-left: auto;
     margin-right: auto;
     margin-top: 10px;
-    /* position: relative; */
     background-color: white;
     box-shadow: 0px 3px 7px rgba(0, 0, 0, 0.1);
     }
   }
 
-  @media (max-width: 768px) {
-    .statistics {
-      /* display: flex; */
-      padding-left: 10px;
-      /* height: 300px; */
-      position: relative;
-      margin-top: 10px;
-      background-color: white;
-      box-shadow: 0px 3px 7px rgba(0, 0, 0, 0.1);
-      }
-    }
-    
-    @media (min-width: 768px) {
-      .statistics {
-        align-items: center;
-        display: flex;
-        /* display:inline-block; */
-        padding-left: 40px;
-        height: 100px;
-        position: relative;
-        width: 90%;
-        margin-left: auto;
-        margin-right: auto;
-        margin-top: 10px;
-        /* position: relative; */
-        background-color: white;
-        box-shadow: 0px 3px 7px rgba(0, 0, 0, 0.1);
-        }
-      }  
-
 @media (max-width: 768px) {
-  .all-statistics-num {
+  .statistics {
+    padding-left: 10px;
+    position: relative;
+    margin-top: 10px;
+    background-color: white;
+    box-shadow: 0px 3px 7px rgba(0, 0, 0, 0.1);
+    }
+  }
+    
+@media (min-width: 768px) {
+  .statistics {
+    align-items: center;
+    display: flex;
+    padding-left: 40px;
+    height: 100px;
+    position: relative;
+    width: 90%;
+    margin-left: auto;
+    margin-right: auto;
+    margin-top: 10px;
+    background-color: white;
+    box-shadow: 0px 3px 7px rgba(0, 0, 0, 0.1);
+    }
+  }  
+
+.all-statistics-num {
   display: flex;
   align-items: center;
   justify-content: center;
 }
+
+
+.buttons--item {
+  flex: 1;
+  text-align: center;
 }
-      
+
+
 @media (min-width: 768px) {
-  .all-statistics-num {
-    display: flex;
-    align-items: center;
-    justify-content: center;
-    
-    /* padding: 20px; */
-    /* align-items: right; */
+  .stat {
+    flex-grow: 1;
+    flex-basis: 0;
+    margin: 1px;
+    font-size: 1.2em;
   }
 }
 
 @media (max-width: 768px) {
-  .buttons--field {
-  display: flex;
-  /* padding: 20px; */
-  /* align-items: right; */
+  .stat {
+    flex-grow: 1;
+    flex-basis: 0;
+    margin: 1px;
+    font-size: 3vw;
   }
 }
-     
+
+
+.nav-filler {
+  text-align: right;
+  align-self: flex-end;
+  padding: 10px;
+  flex-grow: 8;
+  flex-basis: 0;
+}
+
+.nav-item {
+   padding: 10px;
+   flex-grow: 1;
+   flex-basis: 0;
+}
+
 @media (min-width: 768px) {
-  .buttons--field {
-    display: flex;
-    /* padding: 20px; */
-    /* align-items: right; */
+  .field { 
+    height: 80px;
+    width: 80px;
+    font-size: 5px;
+    text-align: "center"
+  } 
+}
+
+@media (min-width: 768px) {
+  .internal--piece {
+    font-size: 55px
   }
 }
 
-      .buttons--item {
-       flex: 1;
-       text-align: center;
-      }
-
-
-      @media (min-width: 768px) {
-        .stat {
-          flex-grow: 1;
-          flex-basis: 0;
-          margin: 1px;
-          font-size: 1.2em;
-        }
-    }
-
-    @media (max-width: 768px) {
-      .stat {
-        flex-grow: 1;
-        flex-basis: 0;
-        margin: 1px;
-        font-size: 3vw;
-      }
-    }
-    /* @media (max-width: 768px) { */
-      .nav-filler {
-        text-align: right;
-        align-self: flex-end;
-        padding: 10px;
-        flex-grow: 8;
-        flex-basis: 0;
-      }
-    /* }    */
-
-    /* @media (max-width: 768px) { */
-    .nav-item {
-      /* list-style: none; */
-      /* display: flex; */
-      /* text-align: right; */
-      /* align-self: flex-end; */
-      padding: 10px;
-        flex-grow: 1;
-        flex-basis: 0;
-    /* } */
+@media (max-width: 768px) {
+  .internal--piece {
+    font-size: 9vw;
   }
+}
 
-
-
-  @media (min-width: 768px) {
-    .field { 
-      height: 80px;
-      width: 80px;
-      font-size: 5px;
-      text-align: "center"
-    } 
+@media (max-width: 768px) {
+  .field {
+    height: 10vw;
+    width: 10vw;
   }
-
-  @media (min-width: 768px) {
-    .internal--piece {
-      font-size: 55px
-    }
-  }
-  @media (max-width: 768px) {
-    .internal--piece {
-      font-size: 9vw;
-    }
-  }
-
-  @media (max-width: 768px) {
-    .field {
-      height: 10vw;
-      width: 10vw;
-    }
-  }
+}
 
 
 @media (max-width: 768px) {
@@ -470,16 +411,15 @@ td:hover {
   flex-basis: 0;
   margin: 1px;
   font-size: 3vw;
-}
+  }
 }
 
 @media (min-width: 768px) {
-.statistic--word {
-  margin: 10px;
-  font-size:12px;
-  padding: 5px;
-  
-}
+  .statistic--word {
+    margin: 10px;
+    font-size:12px;
+    padding: 5px;  
+  }
 }
 
 @media (min-width: 768px) {
@@ -491,7 +431,6 @@ td:hover {
 
 @media (max-width: 768px) {
   .statistic--num {
-    flex-grow: 1;
     flex-basis: 0;
     margin: 1px;
     font-size: 5vw;
@@ -501,7 +440,6 @@ td:hover {
 @media (max-width: 768px) {
   .some-page-wrapper {
     display: none;
-    /* visibility: hidden */
   }
 }
 

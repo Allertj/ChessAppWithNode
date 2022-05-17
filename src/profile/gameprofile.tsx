@@ -11,17 +11,24 @@ const parseResult = (result: string, opponent: string) => {
     if (res.winner) {return res.winner !== opponent ? `Won by ${res.by}` : `Lost by ${res.by}`}
 }
 
+const getStatus = (status: string, callback: () => void) => {
+    switch (status) {
+        case "Open": return <div></div>
+        case "Ended": return <button onClick={callback}>View</button>
+        default: return <button onClick={callback}>Resume</button>
+    }
+}
+
 const GameProfile = ({ gameid, status, opponent, result, loadGame }: GameProfileArgs) => {
     const chooseGame = () => {
         loadGame(gameid)
-    }
-    let gameopen = (status === "Ended" || status === "Open")    
+    } 
     return (<div className="game">
               <div className="stat">GAME {gameid.slice(-10)}</div>
               <div className="stat">Played Against : {opponent.slice(-10)}</div>
               <div className="stat">Status : {status}</div>
-              {!gameopen && <div className="button"><button onClick={chooseGame}>Resume</button></div>}
               {status === "Ended" && <div className="stat"> {parseResult(result, opponent)}</div>}
+              <div className="button">{getStatus(status, chooseGame)}</div>
             </div>)
   }
   

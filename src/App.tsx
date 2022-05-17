@@ -11,9 +11,8 @@ const Page = () => {
   let [gameasjson, setGameAsJson] = React.useState({})
   let [userdata, setUserData] = React.useState({id: "", accessToken: "", username: ""}) 
 
-  const loginthesite = (data : any) => {
-      let aaa =  JSON.stringify(data)
-      localStorage.setItem("userdata", aaa)
+  const saveUserData = (data : any) => {
+      localStorage.setItem("userdata", JSON.stringify(data))
       setUserData(data)
       navigate("/profile", { replace: true });
   }
@@ -37,16 +36,16 @@ const Page = () => {
   let profile = <ProfilePage userdata={userdata}  
                              handlechoice={chooseGame}/>
 
-  let standard =  userdata.accessToken === "" ? <LoginScreen login={loginthesite}/> : profile
+  let standard =  userdata.accessToken === "" ? <LoginScreen login={saveUserData}/> : profile
   return (<div className="main-container">
             
             <NavBar handleLogout={handleLogout}  
                     username={userdata.username}/> 
             <Routes>
                 <Route path="/" 
-                       element={<LoginScreen login={loginthesite}/>} />
+                       element={<LoginScreen login={saveUserData}/>} />
                 <Route path="/login" 
-                       element={<LoginScreen login={loginthesite}/>} />       
+                       element={<LoginScreen login={saveUserData}/>} />       
                 <Route path="/register" 
                        element={<Register/>} />     
                 <Route path="/profile" 

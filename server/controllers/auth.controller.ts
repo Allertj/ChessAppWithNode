@@ -7,7 +7,6 @@ import { Document} from "mongoose";
 
 const User = db.user;
 const Role = db.role;
-// const Game = db.game;
 
 interface DBRole extends Document {
   name: String
@@ -35,6 +34,7 @@ const signup = (req : Express.Request, res : Express.Response) => {
     open_games: 0,
     password: bcrypt.hashSync(req.body.password, 8)
   });
+  
   user.save((err: any, user: DBUser) => {
     if (err) {
       res.status(500).send({ message: err });

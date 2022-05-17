@@ -18,6 +18,7 @@ const verifyMove = (data: any, game: any, socket: any) => {
             document.getElementById(XYString(destx, desty))?.click()
             let newmsg = {move: msg, 
                           gameasjson: JSON.stringify(game, replacer)}
+            if (!socket) {return}              
             socket.emit("move verified", newmsg)
         }
     }    
@@ -27,6 +28,13 @@ const MainContainer = (data: any) => {
         const [drawproposed, setDrawProposed] = React.useState(() => {return false})
         const game = Object.assign(new Game(), data.gamedata)
         let socket = React.useRef(createSocket(data.userdata.accessToken, data.userdata.id))
+        React.useEffect(() => {
+            if (data.gamedata.status === "Endend") {
+                data.gamedata.unverified_move = undefined
+                data.gamedata.color = 2
+             }
+
+        }, [data, game])     
         React.useEffect(() => {
             if (data.gamedata.unverified_move) {
                 verifyMove(data, game, data.socket)

@@ -52,15 +52,14 @@ const ProfilePage = (props: any) => {
   }
   const loadedGameRetrieved = (data: any) => {
       let color = (data.player1id === props.userdata.id ? 1 : 0)
-      let gamedata = JSON.parse(data.gameasjson, reviver) 
-    //   console.log("GAME STATUS", gamedata.status)        
+      let gamedata = JSON.parse(data.gameasjson, reviver)       
       gamedata.color = color
       gamedata.id = data._id
       gamedata.unverified_move = data.unverified_move
       gamedata.draw_proposed = data.draw_proposed
       props.handlechoice(gamedata)
       navigate("/game", { replace: true });
-  }
+  } 
   return <ProfilePageHolder userdata={props.userdata}
                             userstats={userstats}
                             showCurrent={showCurrent}
