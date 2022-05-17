@@ -19,7 +19,7 @@ services:
       - ${REACT_APP_BACKEND_PORT}
     build:
       context: .
-      dockerfile: DockerfileServer
+      dockerfile: docker/DockerfileServer
     volumes:
       - '.:/app'
       - '/app/node_modules'  
