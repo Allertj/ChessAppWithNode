@@ -7,8 +7,8 @@ interface GameProfileArgs {gameid: string,
 const parseResult = (result: string, opponent: string) => {
     let res = JSON.parse(result);
     if (res.draw) return "Draw"
-    if (res.loser) {return res.loser  !== opponent ? `Won by ${res.by}` : `Lost by ${res.by}`}
-    if (res.loser) {return res.winner !== opponent ? `Won by ${res.by}` : `Lost by ${res.by}`}
+    if (res.loser) {return res.loser  !== opponent ? `Lost by ${res.by}` : `Won by ${res.by}`}
+    if (res.winner) {return res.winner !== opponent ? `Won by ${res.by}` : `Lost by ${res.by}`}
 }
 
 const GameProfile = ({ gameid, status, opponent, result, loadGame }: GameProfileArgs) => {

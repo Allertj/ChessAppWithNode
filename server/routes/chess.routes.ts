@@ -21,6 +21,17 @@ const chessRoutes = (app: any) => {
         checkRolesExisted
     ], signup);
 
+    app.get("/profile/:id/stats", authJwt.verifyToken, async (req : Express.Request, res : Express.Response) => {
+        res.header("Access-Control-Allow-Origin", "*");
+        try {
+            let user = await User.findOne({ _id: req.params.id })
+            res.send({stats: user.stats, open_games: user.open_games})
+            res.end()
+        } catch (err) {
+            res.send({ response: err }).status(400);
+        }        
+    })
+
     app.get("/profile/:id/open", authJwt.verifyToken, async (req : Express.Request, res : Express.Response) => {
         res.header("Access-Control-Allow-Origin", "*");
         try {

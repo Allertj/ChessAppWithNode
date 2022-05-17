@@ -9,11 +9,18 @@ const ProfilePage = (props: any) => {
   let navigate = useNavigate();
   let [showCurrent, setShowCurrentState] = React.useState(true)
   let [retrieveGames, setRetrieveGames] = React.useState([])
+  let [userstats, setUserStatsState] = React.useState({stats: "{\"W\":0, \"D\":0, \"L\":0}", open_games: 0,})
   
   React.useEffect(() => {
       askNewGames()
+      askUserStats()
   }, [])
-
+  const askUserStats = () => {
+    makeGETRequestAuth(`${server}/profile/${props.userdata.id}/stats`, setUserStats, "", props.userdata.accessToken)
+  }
+  const setUserStats = (data: any) => {
+      setUserStatsState(data)
+  }
   const setShowCurrent = () => {
        setShowCurrentState(!showCurrent)  
       if (!showCurrent) {
@@ -24,13 +31,15 @@ const ProfilePage = (props: any) => {
   }
   const askNewGames = () => {
       makeGETRequestAuth(`${server}/profile/${props.userdata.id}/open`, getNewGames, "", props.userdata.accessToken)
-  }
+      askUserStats()  
+    }
   const createNewGame = () => {
       makePOSTRequestAuth(`${server}/newgame`, 
                             props.userdata, 
                             askNewGames, 
                             "", 
                             props.userdata.accessToken)
+                    
   }
   const getNewGames = (data: any) => {
       setRetrieveGames(data)
@@ -43,7 +52,8 @@ const ProfilePage = (props: any) => {
   }
   const loadedGameRetrieved = (data: any) => {
       let color = (data.player1id === props.userdata.id ? 1 : 0)
-      let gamedata = JSON.parse(data.gameasjson, reviver)         
+      let gamedata = JSON.parse(data.gameasjson, reviver) 
+    //   console.log("GAME STATUS", gamedata.status)        
       gamedata.color = color
       gamedata.id = data._id
       gamedata.unverified_move = data.unverified_move
@@ -52,6 +62,7 @@ const ProfilePage = (props: any) => {
       navigate("/game", { replace: true });
   }
   return <ProfilePageHolder userdata={props.userdata}
+                            userstats={userstats}
                             showCurrent={showCurrent}
                             loadGame={loadGame}
                             createNewGame={createNewGame}

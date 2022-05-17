@@ -47,9 +47,14 @@ const editGame = async (id: String, obj: any) => {
   }
   
   const addStatistics = (gameid: String, draw: boolean, winner: String | null, loser: String | null) => {
-      Game.findOne({
+    // console.log("addstatiscsstart", winner, gameid)
+    Game.findOne({
           _id: gameid
-       }).exec((err: any, game: GameModel) => {
+       }).exec((err: any, game: any) => {
+         game.toObject();
+         delete game.unverified_move
+         delete game.draw_proposed
+         game.time_ended = new Date().toUTCString()
           if (draw) {
               AddStatToUser(game.player1id, "D", gameid)
               AddStatToUser(game.player0id, "D", gameid)

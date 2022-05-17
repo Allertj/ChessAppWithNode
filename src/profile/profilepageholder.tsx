@@ -10,7 +10,7 @@ const ProfilePageHolder = (data: any) => {
                                      status={game.status}/>)
                 })
 
-    let {W,D,L} = JSON.parse(data.userdata.stats)
+    let {W,D,L} = JSON.parse(data.userstats.stats)
     return (
        <div className="profile">
           <div className="statistics">  
@@ -18,7 +18,7 @@ const ProfilePageHolder = (data: any) => {
             <div className="statistic--num">{W}</div><div className="statistic--word">WINS&nbsp;</div>
             <div className="statistic--num">{D}</div><div className="statistic--word">DRAWS</div>
             <div className="statistic--num">{L}</div><div className="statistic--word">LOST&nbsp;</div>
-            <div className="statistic--num">{data.userdata.open_games}</div>
+            <div className="statistic--num">{data.userstats.open_games}</div>
              <div className="statistic--word">PLAYING</div></div>
 
              <div className="buttons--field">

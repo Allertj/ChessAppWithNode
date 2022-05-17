@@ -82,7 +82,7 @@ function startSocket(io: any){
           let curgame  = JSON.parse(msg.gameasjson)
           if (curgame.status === "Checkmate") {
               editGame(msg.move.gameid, {result: JSON.stringify({draw: false, winner: msg.move.sender, by: "Checkmate"}), status: "Ended"})
-              addStatistics(msg.gameid, false, msg.move.sender, null) 
+              addStatistics(msg.move.gameid, false, msg.move.sender, null) 
               return;
           }
           if (curgame.status === "Stalemate") {
