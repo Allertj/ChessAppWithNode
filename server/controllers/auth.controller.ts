@@ -11,72 +11,36 @@ const Role = db.role;
 interface DBRole extends Document {
   name: String
 }
-interface DBUser extends Document{
-  username: String,
-  email: String,
-  password: String,
-  id : String,
-  stats : String,
-  open_games: Number,
-  open_games_ids: [],
-  roles: [
-    {
-      type: mongoose.Schema.Types.ObjectId,
-      ref: "Role"
-    }
-  ]
-}
 
-const signup = (req : Express.Request, res : Express.Response) => {
+const signup = async (req : Express.Request, res : Express.Response) => {
   const user = new User({
     username: req.body.username,
     email: req.body.email,
     open_games: 0,
     password: bcrypt.hashSync(req.body.password, 8)
   });
-  
-  user.save((err: any, user: DBUser) => {
-    if (err) {
+  try {
+      await user.save()
+      if (req.body.roles) {
+         let roles = await Role.find({ name: { $in: req.body.roles }})
+         user.roles = roles.map((role : DBRole)=> role._id);
+         await user.save()
+         res.send({ message: "User was registered successfully!" });
+      } else {
+        let role = await Role.findOne({ name: "user" }) 
+        user.roles = [role._id];   
+        await user.save()    
+        res.send({ message: "User was registered successfully!" });
+      } 
+  } catch (err) {
       res.status(500).send({ message: err });
       return;
-    }
-    if (req.body.roles) {
-      Role.find({ name: { $in: req.body.roles }}, (err : any, roles: any) => {
-        if (err) {
-           res.status(500).send({ message: err });
-           return;
-        }
-        user.roles = roles.map((role : DBRole)=> role._id);
-        user.save((err: any) => {
-          if (err) {
-             res.status(500).send({ message: err });
-             return;
-        }
-          res.send({ message: "User was registered successfully!" });
-        });});
-    } else {
-      Role.findOne({ name: "user" }, (err: any, role: DBRole) => {
-        if (err) {
-          res.status(500).send({ message: err });
-          return;
-        }
-        user.roles = [role._id];
-        user.save(err => {
-          if (err) {
-            res.status(500).send({ message: err });
-            return;
-          }
-          res.send({ message: "User was registered successfully!" });
-        });
-      });
-    }
-  });
+  }
 };
 const signin = (req : Express.Request, res : Express.Response) => {
   User.findOne({
     username: req.body.username
-  })
-    .populate("roles", "-__v")
+  }).populate("roles", "-__v")
     .exec((err, user) => {
       if (err) {
         res.status(500).send({ message: err });
@@ -85,7 +49,7 @@ const signin = (req : Express.Request, res : Express.Response) => {
       if (!user) {
         return res.status(404).send({ message: "User Not found." });
       }
-      var passwordIsValid = bcrypt.compareSync(
+      const passwordIsValid = bcrypt.compareSync(
         req.body.password,
         user.password
       );
@@ -95,10 +59,10 @@ const signin = (req : Express.Request, res : Express.Response) => {
           message: "Invalid Password!"
         });
       }
-      var token = jwt.sign({ id: user.id }, process.env.REACT_APP_SECRET as string, {
+      const token = jwt.sign({ id: user.id }, process.env.REACT_APP_SECRET as string, {
         expiresIn: 86400 // 24 hours
       });
-      var authorities = [];
+      const authorities = [];
       for (let i = 0; i < user.roles.length; i++) {
         authorities.push("ROLE_" + user.roles[i].name.toUpperCase());
       }
@@ -113,7 +77,5 @@ const signin = (req : Express.Request, res : Express.Response) => {
       });
     });
 };
-
-
 
 export { signup, signin}

@@ -1,8 +1,5 @@
-// const { authJwt } = require("../middlewares");
-// const controller = require("../controllers/user.controller");
 import { authJwt } from "../middlewares/authJwt"
 import {allAccess, userBoard, adminBoard, moderatorBoard} from "../controllers/user.controller"
-// import { signup, signin, createNewGameinDB } from "../controllers/auth.controller";
 import Express from 'express';
 
 const userRoutes = (app: any) => {

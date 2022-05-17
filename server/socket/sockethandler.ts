@@ -90,8 +90,7 @@ function startSocket(io: any){
             addStatistics(msg.gameid, true, null,  null) 
             return;
         }
-          Game.findOne({
-                _id: msg.move.gameid
+          Game.findOne({ _id: msg.move.gameid
               }).exec((err: any, game: GameModel) => {
                   if (game.unverified_move && JSON.stringify(msg.move) === game.unverified_move) {   
                     editGame(msg.move.gameid, {gameasjson: msg.gameasjson, unverified_move: ""})

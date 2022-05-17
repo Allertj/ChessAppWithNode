@@ -7,4 +7,3 @@ const Role = mongoose.model(
   })
 );
 export { Role }
-// module.exports = Role;
