@@ -8,7 +8,6 @@ dotenv.config();
 
 let app = express();
 let server = http.createServer(app)
-// add options to createServer to add certificate.
 if (process.env.USE_SSL_IN_BACKEND === "true") {
   const privateKey = fs.readFileSync(process.env.SSL_KEY_FILE as string, 'utf8');
   const certificate = fs.readFileSync(process.env.SSL_CRT_FILE as string, 'utf8');
@@ -20,8 +19,7 @@ if (process.env.USE_SSL_IN_BACKEND === "true") {
 }
 app.use(express.json());
 app.use(express.urlencoded({ extended: true }));
-    //@ts-expect-error  
-app.options('*', cors())
+app.use(cors())
 
 //Add Routes
 import {authRoutes} from './routes/auth.routes'
@@ -33,10 +31,9 @@ userRoutes(app)
 chessRoutes(app)
 
 //Add Socket
-import socketIOServer from "socket.io"
-//@ts-expect-error
-const io = socketIOServer(server, {cors: {origin: "*"}});
-import {startSocket} from './socket/sockethandler'
+import { Server} from 'socket.io'
+import { startSocket } from './socket/sockethandler'
+const io = new Server(server, {cors: {origin: "*"}})
 startSocket(io)
 
 // Start database
@@ -44,11 +41,7 @@ import {initial} from './initiatedb'
 import {db} from './models'
 
 db.mongoose
-    .connect(`mongodb://${process.env.DBHOST}:${process.env.DBPORT}/${process.env.DBNAME}`, {
-    //@ts-expect-error
-    useNewUrlParser: true,
-    useUnifiedTopology: true
-  })
+    .connect(`mongodb://${process.env.DBHOST}:${process.env.DBPORT}/${process.env.DBNAME}`)
   .then(() => {
     console.log("Successfully connect to MongoDB.");
     initial();

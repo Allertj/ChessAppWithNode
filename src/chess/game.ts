@@ -18,7 +18,7 @@ class Game {
     castling = new Map()
     promotion = {x : 8, y : 8, player : 2}
     latest_poss: Array<[number, number]>= []
-    moves = []
+    moves : Array<Array<any>>= []
     movescount = 0
     last_selected : Array<number>= []
     constructor(gameInfo: string="") {
@@ -30,8 +30,7 @@ class Game {
         return this.status;
     }
     get last_selected_as_string() {
-                //@ts-expect-error
-        return !this.last_selected ?  this.last_selected[0].toString()+this.last_selected[1].toString() : ""
+        return this.last_selected ?  this.last_selected[0].toString()+this.last_selected[1].toString() : ""
     }
     get latest_poss_as_string () {
         return this.latest_poss.map(value => value[0].toString()+value[1].toString())
@@ -74,7 +73,7 @@ class Game {
             });
             if (this.board[x][y]?.letter === "M") {
                 let result = this.checkCastling(this.board, x, y, player);
-                        //@ts-expect-error
+
                 result.forEach(value => temp.push(value));
             }
         }
@@ -88,17 +87,14 @@ class Game {
         let temp = board[x][y];
         let dd;
         delete board[x][y];
-        //@ts-expect-error
-        [temp.x, temp.y] = [destx, desty];
+        if (temp) { [temp.x, temp.y] = [destx, desty] };
         if (board[destx][desty]) {
             dd = board[destx][desty];
         }
         board[destx][desty] = temp;
         let aa = this.checkForCheck(player, board);
         board[x][y] = temp;
-                //@ts-expect-error
-        [temp.x, temp.y] = [x, y];
-
+        if (temp) {  [temp.x, temp.y] = [x, y];}    
         board[destx][desty] = null;
         if (dd) {
             board[destx][desty] = dd;
@@ -128,8 +124,8 @@ class Game {
         }
     }
     movePossible(x: number, y: number, destx: number, desty: number) {
-                //@ts-expect-error
-        for (let move of this.board[x][y].getMovements(this.board, x, y)) {
+        let movements = this.board[x][y]?.getMovements(this.board, x, y) 
+        for (let move of (movements || [])) {
             if (move[0] === destx && move[1] === desty) {
                 return true;
             }
@@ -168,20 +164,17 @@ class Game {
         this.passed_pawn_removal.clear()
     }
     makeCastling(x: number, y: number, destx: number, desty: number) {
-        let rookmovement = new Map([["0", 2], ["7", 5]]);
-        let kingmovement = new Map([["0", 1], ["7", 6]]);
-        //@ts-expect-error
-        this.makeMoveInternal(this.board, destx, desty, destx, rookmovement.get(desty.toString()));
-        //@ts-expect-error
-        this.makeMoveInternal(this.board, x, y, destx, kingmovement.get(desty.toString()));
+        let rookmovement = new Map([[0, 2], [7, 5]]);
+        let kingmovement = new Map([[0, 1], [7, 6]]);
+        this.makeMoveInternal(this.board, destx, desty, destx, rookmovement.get(desty) as number);
+        this.makeMoveInternal(this.board, x, y, destx, kingmovement.get(desty) as number);
     }
     makeMove(board: any, x: number, y: number, destx: number, desty: number, player: Player) {
         this.latest_poss = []
         this.last_selected = []
         this.movescount += 1
         let strike = board[destx][desty] ? " X " : " - "
-                //@ts-expect-error
-        this.moves.push([this.board[x][y].player, x, y, destx, desty, this.movescount, strike, this.board[x][y].letter])
+        this.moves.push([this.board[x][y]?.player, x, y, destx, desty, this.movescount, strike, this.board[x][y]?.letter])
         // if (player !== this.turn) { return false; }
         if (this.passed_pawn.has([x, y].join(",")) && board[x][y].letter === "P") {
             if (this.passed_pawn.get([x, y].join(",")).join(",") === [destx, desty].join(",")) {
@@ -212,8 +205,8 @@ class Game {
         }
         return false;
     }
-    checkCastling(board: Array<Array<Piece | null>>, x: number, y: number, player: Player) {
-        let possible = [];
+    checkCastling(board: Array<Array<Piece | null>>, x: number, y: number, player: Player) : Array<[number, number]>{
+        let possible : Array<[number, number]> = [];
         if (!board[x][y]?.moved && (board[x][y + 4] || board[x][y - 3])) {
             if (board[x][y + 4] && board[x][y + 4]?.constructor.name === "Rook" && board[x][y + 4]?.moved === false) {
                 if (board[x][y + 1] === null && board[x][y + 2] === null && board[x][y + 3] === null) {
@@ -283,7 +276,7 @@ class Game {
     getPiece(x: number, y: number) {
         return this.board[x][y]
     }
-    getInstanceOfPiece(x: number, y: number, letter: string, player: Player, moved: boolean) {
+    static getInstanceOfPiece(x: number, y: number, letter: string, player: Player, moved: boolean) {
         switch (letter) {
             case "R": return new Rook(x, y, player, moved);
             case "B": return new Bishop(x, y, player, moved);
@@ -295,7 +288,7 @@ class Game {
         }
     }
     promotePiece(x: number, y: number, player: Player, choice: string) {
-        let newpiece = this.getInstanceOfPiece(x, y, choice, player, true)
+        let newpiece = Game.getInstanceOfPiece(x, y, choice, player, true)
         this.board[x][y] = newpiece
         this.promotion = {x : 8, y : 8, player : 2}
     }
@@ -303,7 +296,7 @@ class Game {
         let newBoard = Array(8).fill(null).map(x => Array(8).fill(null));
         for (const piece in gamei) {
             let [x, y, piec, moved, player] = gamei[piece];
-            newBoard[x][y] = this.getInstanceOfPiece(x, y, piec, player, moved);
+            newBoard[x][y] = Game.getInstanceOfPiece(x, y, piec, player, moved);
         }
         this.board = newBoard; 
     }

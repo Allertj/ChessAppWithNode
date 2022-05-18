@@ -13,6 +13,7 @@ services:
       - ${PRODUCTION_PORT}:${INTERNAL_NGINX_PORT}
     environment:
       - CHOKIDAR_USEPOLLING=true
+      
   backendsocket: 
     container_name: 'backendsocket'
     expose:
@@ -25,6 +26,7 @@ services:
       - '/app/node_modules'  
     ports:
       - "${REACT_APP_BACKEND_PORT}:${REACT_APP_BACKEND_PORT}"
+
   mongo:
     image: 'mongo' 
     command: "mongod --port ${DBPORT}"

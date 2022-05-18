@@ -24,21 +24,17 @@ const XYString = (x: number, y: number) => {
 }
 
 const Construct = (x: number, y: number, row: Array<any>, data: any) => {
-    let id = XYString(x,y)
-    //@ts-expect-error
-    let highlight = (data.highlighted[0] && XYString(...data.highlighted) === id) ? " currentlyselected" : ""
+    let id = XYString(x,y)   
+    let highlight = (data.highlighted[0] && XYString(data.highlighted[0], data.highlighted[1]) === id) ? " currentlyselected" : ""
     let option = (data.options.includes(id)) ? " options" : ""
     let base = baseCell(x,y);
     let piece = data.board[x][y] ? figures[data.board[x][y].player].get(data.board[x][y].letter) : ""
-    // let typeletter = data.board[x][y] ? data.board[x][y].letter : ""
 
     row.push(<Cell  key={id} 
-                    id={id}      // end : (item, monito/r) =>
-                    // option={data.options.includes(id)}
+                    id={id}  
                     drops={data.options.includes(id)}
                     classes={base+highlight+option}
                     signalMove={data.signalMove}
-                    // typeletter={typeletter}
                     piece={piece}/>)
     return row                
 }
