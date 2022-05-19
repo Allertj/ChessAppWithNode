@@ -1,42 +1,20 @@
 import  Jwt  from 'jsonwebtoken'
 import { addStatistics, editGame } from '../controllers/gamestats.controller';
 import { db } from "../models"
+import {SocketMessage, SocketMessageSender, SocketMessageGame, SocketMessageMove, SocketMessageVerified} from '../interfaces/interfaces'
+import {Server, Socket} from 'socket.io'
 
 const Game = db.game;
 
-interface GameModel {
-  player0id: String,
-  player1id: String,
-  status: String, 
-  result: String,
-  time_started: String,
-  time_ended: String,
-  unverified_move: String,
-  draw_proposed: String,
-  gameasjson: String,
-}
-
-interface SocketMessage {
-  gameid: String,
-  sender: String
-}
-
-interface SocketMessageBoard {
-  gameid: String,
-  sender: String,
-  gameasjson: string
-  move: any
-}
-
-function startSocket(io: any){
-    io.use((socket : any, next: () => void) => {
+function startSocket(io: Server){
+    io.use((socket : Socket, next: () => void) => {
         Jwt.verify(socket.handshake.auth.token, process.env.REACT_APP_SECRET as string, (err: any, decoded: any) => {
           if (decoded) { 
             next()
           }
         });
       });
-    io.on('connection', (client: any) => {
+    io.on('connection', (client: Socket) => {
         client.on("initiate", (msg: SocketMessage) => {
             client.join(msg.gameid)
             io.to(msg.gameid).emit("connectaaa", `connected to ${msg.gameid}`);
@@ -51,12 +29,12 @@ function startSocket(io: any){
             io.to(msg.gameid).emit("promotion_received", msg)
         });
         
-        client.on("propose_draw", (msg: SocketMessage) => {
+        client.on("propose_draw", (msg: SocketMessageSender) => {
             editGame(msg.gameid, {draw_proposed: JSON.stringify({sender: msg.sender})})
             client.broadcast.to(msg.gameid).emit("draw_proposed", msg)
         });
         
-        client.on("draw_accepted", (msg: SocketMessageBoard) => {
+        client.on("draw_accepted", (msg: SocketMessageGame) => {
           let gameasjson1 = JSON.parse(msg.gameasjson)
           gameasjson1.status = "Draw"
           editGame(msg.gameid, {result: JSON.stringify({draw: true, by: "Proposal", notes: `accepted by ${msg.sender}`}), 
@@ -72,13 +50,13 @@ function startSocket(io: any){
           client.broadcast.to(msg.gameid).emit("draw_finalised", {result: "declined"})
         })
         
-        client.on("concede", (msg: SocketMessage) => {
+        client.on("concede", (msg: SocketMessageMove) => {
           editGame(msg.gameid, {result: JSON.stringify({draw: false, loser: msg.sender, by: "Concession"}), status: "Ended"})
           addStatistics(msg.gameid, false, null, msg.sender)   
           client.broadcast.to(msg.gameid).emit("other_player_has_conceded", msg)
         });    
         
-        client.on("move verified", (msg: SocketMessageBoard) => { 
+        client.on("move verified", (msg: SocketMessageVerified) => { 
           let curgame  = JSON.parse(msg.gameasjson)
           if (curgame.status === "Checkmate") {
               editGame(msg.move.gameid, {result: JSON.stringify({draw: false, winner: msg.move.sender, by: "Checkmate"}), status: "Ended"})
@@ -91,7 +69,7 @@ function startSocket(io: any){
             return;
         }
           Game.findOne({ _id: msg.move.gameid
-              }).exec((err: any, game: GameModel) => {
+              }).exec((err: any, game: any) => {
                   if (game.unverified_move && JSON.stringify(msg.move) === game.unverified_move) {   
                     editGame(msg.move.gameid, {gameasjson: msg.gameasjson, unverified_move: ""})
                   }

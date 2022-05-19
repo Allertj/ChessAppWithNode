@@ -1,9 +1,9 @@
 import { authJwt } from "../middlewares/authJwt"
 import {allAccess, userBoard, adminBoard, moderatorBoard} from "../controllers/user.controller"
-import Express from 'express';
+import {Request, Response, Application, NextFunction} from 'express';
 
-const userRoutes = (app: any) => {
-  app.use(function(req : Express.Request, res : Express.Response, next : ()=>{}) {
+const userRoutes = (app: Application) => {
+  app.use(function(req : Request, res : Response, next : NextFunction) {
     res.header(
       "Access-Control-Allow-Headers",
       "x-access-token, Origin, Content-Type, Accept"

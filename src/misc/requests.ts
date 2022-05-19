@@ -37,7 +37,7 @@ const makePOSTRequest = (address: string, body: any, callback: (data: any)=> voi
         else { callback(data)}});         
   }
 
-  const makePOSTRequestAuth = (address: string, body :string, callback: (data: any)=> void, attr: string, token: string) => {  
+  const makePOSTRequestAuth = (address: string, body : any, callback: (data: any)=> void, attr: string, token: string) => {  
     const requestOptions = {
       method: 'POST',
       headers: { 'Content-Type': 'application/json',

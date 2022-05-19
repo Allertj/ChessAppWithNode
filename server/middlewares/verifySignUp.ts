@@ -1,9 +1,10 @@
 import { db } from '../models'
+import {Request, Response, NextFunction} from 'express'
 
 const ROLES = db.ROLES;
 const User = db.user;
 
-const checkDuplicateUsername = async (req : any, res : any, next: any) => {
+const checkDuplicateUsername = async (req : Request, res : Response, next: NextFunction) => {
   try {
       let user = await User.findOne({ username: req.body.username})
       if (user) {
@@ -16,7 +17,7 @@ const checkDuplicateUsername = async (req : any, res : any, next: any) => {
       return;
   }
 }
-const checkDuplicateEmail  = async (req : any, res : any, next: any) => {  
+const checkDuplicateEmail  = async (req : Request, res : Response, next: NextFunction) => {  
   try {
     let email = await User.findOne({ email: req.body.email })
     if (email) {
@@ -30,7 +31,7 @@ const checkDuplicateEmail  = async (req : any, res : any, next: any) => {
   }
 }
 
-const checkRolesExisted = (req : any, res : any, next : any) => {
+const checkRolesExisted = (req : Request, res : Response, next : NextFunction) => {
   if (req.body.roles) {
     for (let i = 0; i < req.body.roles.length; i++) {
       if (!ROLES.includes(req.body.roles[i])) {

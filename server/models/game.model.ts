@@ -1,18 +1,33 @@
-import mongoose from "mongoose";
+import mongoose, {Schema, Document} from "mongoose";
 
-const Game = mongoose.model(
-  "Game",
-  new mongoose.Schema({
-    player0id: String,
-    player1id: String,
-    status: String, 
-    result: String,
-    time_started: String,
-    time_ended: String,
-    unverified_move: String,
-    draw_proposed: String,
-    gameasjson: String,
-  })
-);
+interface GameModel {
+  player0id?: string,
+  player1id?: string,
+  status?: string, 
+  result?: string,
+  time_started?: string,
+  time_ended?: string,
+  unverified_move?: string,
+  draw_proposed?: string,
+  gameasjson?: string,
+}
 
+interface GameModelDB extends Document, GameModel {}
+
+const GameSchema = new Schema<GameModel>({
+  player0id: {type: String, required: true},
+  player1id: String,
+  status: {type: String, required: true}, 
+  result: String,
+  time_started: String,
+  time_ended: String,
+  unverified_move: String,
+  draw_proposed: String,
+  gameasjson: String,
+
+})
+
+const Game = mongoose.model<GameModel>("Game", GameSchema);
+
+export type { GameModel, GameModelDB}
 export { Game }

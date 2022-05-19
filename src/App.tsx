@@ -5,19 +5,23 @@ import { MainContainer } from './gameplay/maincontainer'
 import { NavBar } from './items/navbar'
 import { Register} from './items/register'
 import { Routes, Route, useNavigate } from "react-router-dom";
+import {UserData, GameAsJson} from './interfaces/interfaces'
 
 const Page = () => {
   let navigate = useNavigate();
   let [gameasjson, setGameAsJson] = React.useState({})
+//   let [userdata, setUserData] = React.useState() 
   let [userdata, setUserData] = React.useState({id: "", accessToken: "", username: ""}) 
 
-  const saveUserData = (data : any) => {
+  const saveUserData = (data : UserData) => {
+    //   console.log(data, "saveuserdata")
       localStorage.setItem("userdata", JSON.stringify(data))
       setUserData(data)
       navigate("/profile", { replace: true });
   }
 
-  const chooseGame = (gameasjson: JSON) => {
+  const chooseGame = (gameasjson: GameAsJson) => {
+    //   console.log("gameasJson", gameasjson)
       setGameAsJson(gameasjson)
   }
 

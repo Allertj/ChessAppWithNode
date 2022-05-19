@@ -1,9 +1,9 @@
 import { checkDuplicateUsername, checkDuplicateEmail, checkRolesExisted } from "../middlewares/verifySignUp";
 import { signup, signin } from "../controllers/auth.controller";
-import Express from 'express';
+import {Request, Response, NextFunction, Application} from 'express';
 
-const authRoutes = (app: any) => {
-  app.use(function(req : Express.Request, res : Express.Response, next : ()=>{}) {
+const authRoutes = (app: Application) => {
+  app.use(function(req : Request, res : Response, next : NextFunction) {
     res.header("Access-Control-Allow-Origin", "*");
     next();
    });

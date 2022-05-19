@@ -1,16 +1,20 @@
 import { GameProfile } from "./gameprofile"
 
-const ProfilePageHolder = (data: any) => {   
-    let games = data.retrievedGames.map((game: any) => {
-                return (<GameProfile key={game._id} 
-                                     loadGame={data.loadGame}
-                                     gameid={game._id} 
-                                     result={game.result}
-                                     opponent={(game.player1id === data.userdata.id ? game.player0id : game.player1id)} 
-                                     status={game.status}/>)
-                })
 
+const createGameProfile = (data: any) => {
+  return data.retrievedGames.map((game: any) => {
+    return (<GameProfile key={game._id} 
+                         loadGame={data.loadGame}
+                         gameid={game._id} 
+                         result={game.result}
+                         opponent={(game.player1id === data.userdata.id ? game.player0id : game.player1id)} 
+                         status={game.status}/>)
+    })
+} 
+
+const ProfilePageHolder = (data: any) => {   
     let {W,D,L} = JSON.parse(data.userstats.stats)
+    // console.log(data.retrieveGames, "retrievegames")
     return (
        <div className="profile">
           <div className="statistics">  
@@ -31,8 +35,8 @@ const ProfilePageHolder = (data: any) => {
               </div>
              </div>
           </div>
-        {games}
-      </div>)
+        {data.retrievedGames && createGameProfile(data)}
+       </div>)
 }
 
 export {ProfilePageHolder}
