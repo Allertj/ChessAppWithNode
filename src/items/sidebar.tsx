@@ -1,4 +1,12 @@
-const SideBar = (data: any) => {
+type SideBarArgs = {
+  concede: () => void
+  moves: Array<string>
+  proposeDraw: () => void
+  setStatus: (data: string) => void
+  status: string
+}
+
+const SideBar = (data: SideBarArgs) => {
     let white = data.moves.filter((move : any) => move.player === "WHITE")
            .map((moves: any) => 
                  <div key={moves.notation}>{moves.piece !== "P" && moves.piece} {moves.notation}</div>)

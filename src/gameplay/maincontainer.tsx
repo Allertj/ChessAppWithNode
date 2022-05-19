@@ -4,27 +4,31 @@ import { Game } from '../chess/game'
 import { XYString } from './board'
 import { replacer } from '../misc/helper';
 import { createSocket } from './createsocket';
+import { UserData, GameAsJson } from '../interfaces/interfaces'
+import {Socket } from "socket.io-client";
 
-const verifyMove = (data: any, game: any, socket: any) => {
+const verifyMove = (data: any, game: Game, socket: Socket) => {
     let msg = JSON.parse(data.gamedata.unverified_move)
     let {x, y, destx, desty, sender, color} = msg
     if (game.board[x][y] && sender === data.userdata.id) {
         game.makeMove(game.board, x, y, destx, desty, color)
         document.getElementById(XYString(destx, desty))?.click()         
     } else {
-        let res = game.getPossibilities(color, x,  y).map(([x,y]: Array<number>)=> XYString(x,y))
+        let res = game.getPossibilities(color, x,  y, false).map(([x,y]: Array<number>)=> XYString(x,y))
         if (res.includes(XYString(destx, desty))) {
             game.makeMove(game.board, x, y, destx, desty, color)
             document.getElementById(XYString(destx, desty))?.click()
             let newmsg = {move: msg, 
                           gameasjson: JSON.stringify(game, replacer)}
             if (!socket) {return}              
-            socket.emit("move verified", newmsg)
+            socket.emit("move_verified", newmsg)
         }
     }    
 }
+// 
 
-const MainContainer = (data: any) => {      
+const MainContainer = (data: {gamedata: GameAsJson, userdata: UserData}) => {  
+        console.log("MainContainer", data)    
         const [drawproposed, setDrawProposed] = React.useState(() => {return false})
         const game = Object.assign(new Game(), data.gamedata)
         let socket = React.useRef(createSocket(data.userdata.accessToken, data.userdata.id))
@@ -37,7 +41,7 @@ const MainContainer = (data: any) => {
         }, [data, game])     
         React.useEffect(() => {
             if (data.gamedata.unverified_move) {
-                verifyMove(data, game, data.socket)
+                verifyMove(data, game, socket.current)
              }
 
         }, [data, game])                  
@@ -61,9 +65,10 @@ const MainContainer = (data: any) => {
                                       sender: data.userdata.id})
         }
         const concede = () => {
-            game.concedeGame({gameid: game.id, 
-                              color: game.color, 
-                              sender: data.userdata.id})
+            game.concedeGame()
+            // game.concedeGame({gameid: game.id, 
+            //                   color: game.color, 
+            //                   sender: data.userdata.id})
             socket.current.emit("concede", {gameid: game.id, 
                                          color: game.color, 
                                          sender: data.userdata.id})
@@ -85,7 +90,6 @@ const MainContainer = (data: any) => {
             }
         }
         return (<BoardContainer game={game}
-                                gameId={data.gameId} 
                                 proposeDraw={proposeDraw}
                                 drawAnswer={drawAnswer}
                                 concede={concede}
@@ -93,7 +97,6 @@ const MainContainer = (data: any) => {
                                 setDrawProposed={setDrawProposed}
                                 socket={socket.current}
                                 token={data.userdata.accessToken}
-                                // active={data.active} 
                                 socketsend={socketSend}/>)
 }
 

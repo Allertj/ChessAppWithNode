@@ -2,16 +2,18 @@ import React from 'react'
 import {makePOSTRequest} from '../misc/requests'
 import { server } from '../config'
 
+type RegisterForm = {username:string, password:string, email:string}
+
 const Register = () => {
-    const [formData, setFormData] = React.useState({  username: "", password: "" ,email: "" })
+    const [formData, setFormData] = React.useState<RegisterForm>({  username: "", password: "" ,email: "" })
     const [message, setMessage] = React.useState("")
-      const setData = (data: any) => {
+      const setData = (data: React.ChangeEvent<HTMLInputElement>) => {
         setFormData(prevState => {
           return {  ...prevState,
                     [data.target.name] : data.target.value } 
         })
 }
-    const submitForm = (event: any) => {
+    const submitForm = (event: React.FormEvent) => {
         event.preventDefault()
         makePOSTRequest(`${server}/api/auth/signup`, formData, setMessage, "message")
 

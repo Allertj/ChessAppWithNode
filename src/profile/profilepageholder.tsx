@@ -1,20 +1,29 @@
 import { GameProfile } from "./gameprofile"
+import {GameData, UserData, UserStats} from '../interfaces/interfaces'
 
+interface GameProfileProps {
+  createNewGame: () => void
+  loadGame: (gameid: string) => void
+  retrievedGames: Array<GameData>
+  setShowCurrent: () => void
+  showCurrent: boolean
+  userdata: UserData
+  userstats: UserStats  
+}
 
-const createGameProfile = (data: any) => {
-  return data.retrievedGames.map((game: any) => {
+const createGameProfile = (data: GameProfileProps) => {
+  return data.retrievedGames.map((game: GameData) => {
     return (<GameProfile key={game._id} 
                          loadGame={data.loadGame}
                          gameid={game._id} 
-                         result={game.result}
+                         result={game.result ? game.result : ""}
                          opponent={(game.player1id === data.userdata.id ? game.player0id : game.player1id)} 
                          status={game.status}/>)
     })
 } 
 
-const ProfilePageHolder = (data: any) => {   
+const ProfilePageHolder = (data: GameProfileProps) => {   
     let {W,D,L} = JSON.parse(data.userstats.stats)
-    // console.log(data.retrieveGames, "retrievegames")
     return (
        <div className="profile">
           <div className="statistics">  

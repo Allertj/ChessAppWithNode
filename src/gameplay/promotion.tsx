@@ -1,13 +1,11 @@
-import React from 'react';
-  
-function Popup (data: any){
+ function Popup ({openMenu, askPromotePiece}: {openMenu: boolean; askPromotePiece: (data:string)=>void}){
   let choice = ""
   const promotionChoice = () => {
-      data.askPromotePiece(choice)
+      askPromotePiece(choice)
       choice = ""
   }
   return(
-    <div id={data.openMenu ? "choose" : "choose-hidden"}> 
+    <div id={openMenu ? "choose" : "choose-hidden"}> 
       <div className="choose-text">Select a piece to promote to:</div>
       <button className="promotion--button" onClick={() => {choice= "Q"; promotionChoice()}} >♕</button>
       <button className="promotion--button" onClick={() => {choice= "R"; promotionChoice()}}>♖</button>

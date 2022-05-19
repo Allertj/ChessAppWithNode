@@ -23,7 +23,7 @@ const XYString = (x: number, y: number) => {
     return x.toString() + y.toString()
 }
 
-const Construct = (x: number, y: number, row: Array<any>, data: any) => {
+const Construct = (x: number, y: number, row: React.ReactElement[], data: any) => {
     let id = XYString(x,y)   
     let highlight = (data.highlighted[0] && XYString(data.highlighted[0], data.highlighted[1]) === id) ? " currentlyselected" : ""
     let option = (data.options.includes(id)) ? " options" : ""

@@ -7,21 +7,29 @@ import { Register} from './items/register'
 import { Routes, Route, useNavigate } from "react-router-dom";
 import {UserData, GameAsJson} from './interfaces/interfaces'
 
+const StandardScreen = ({userdata, chooseGame, saveUserData}: 
+                        {userdata: UserData | undefined, 
+                        chooseGame: (data: GameAsJson) => void, 
+                        saveUserData: (data: UserData) => void}) => {
+    if (userdata) { 
+      return <ProfilePage userdata={userdata} handlechoice={chooseGame}/>
+    } else { 
+      return <LoginScreen login={saveUserData}/>
+    }
+}
+
 const Page = () => {
   let navigate = useNavigate();
-  let [gameasjson, setGameAsJson] = React.useState({})
-//   let [userdata, setUserData] = React.useState() 
-  let [userdata, setUserData] = React.useState({id: "", accessToken: "", username: ""}) 
+  let [gameasjson, setGameAsJson] = React.useState<GameAsJson>()
+  let [userdata, setUserData] = React.useState<UserData>() 
 
   const saveUserData = (data : UserData) => {
-    //   console.log(data, "saveuserdata")
       localStorage.setItem("userdata", JSON.stringify(data))
       setUserData(data)
       navigate("/profile", { replace: true });
   }
 
   const chooseGame = (gameasjson: GameAsJson) => {
-    //   console.log("gameasJson", gameasjson)
       setGameAsJson(gameasjson)
   }
 
@@ -34,17 +42,14 @@ const Page = () => {
 
   const handleLogout = () => {
       localStorage.removeItem("userdata")
-      setUserData({accessToken : "", id : "", username: ""})
+      setUserData(undefined)
       navigate("/login", { replace: true });
   }
-  let profile = <ProfilePage userdata={userdata}  
-                             handlechoice={chooseGame}/>
-
-  let standard =  userdata.accessToken === "" ? <LoginScreen login={saveUserData}/> : profile
+  let standard = < StandardScreen userdata={userdata} saveUserData={saveUserData} chooseGame={chooseGame}/>
   return (<div className="main-container">
             
             <NavBar handleLogout={handleLogout}  
-                    username={userdata.username}/> 
+                    username={userdata ? userdata.username : ""}/> 
             <Routes>
                 <Route path="/" 
                        element={<LoginScreen login={saveUserData}/>} />
@@ -53,12 +58,12 @@ const Page = () => {
                 <Route path="/register" 
                        element={<Register/>} />     
                 <Route path="/profile" 
-                       element={standard} />             
+                       element={standard}/>             
                 <Route path="/game" 
-                       element={Object.keys(gameasjson).length === 0 ? standard :
+                       element={ gameasjson && userdata ? 
                                  <MainContainer gamedata={gameasjson} 
-                                                userdata={userdata}/>}/> 
-                <Route path="*" element={standard} />                                 
+                                                userdata={userdata}/> : standard}/> 
+                <Route path="*" element={standard}/>                                 
             </Routes>                                                     
          </div>)      
 }

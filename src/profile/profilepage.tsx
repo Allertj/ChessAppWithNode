@@ -4,26 +4,12 @@ import { makePOSTRequestAuth, makeGETRequestAuth } from '../misc/requests'
 import { server } from '../config'
 import { reviver} from '../misc/helper'
 import {ProfilePageHolder} from './profilepageholder'
-import {UserData, GameAsJson} from '../interfaces/interfaces'
+import {UserData, GameAsJson, GameData, UserStats} from '../interfaces/interfaces'
 
-interface GameData {
-    gameasjson: string
-    player0id: string
-    player1id: string
-    status: string
-    time_started: string
-    time_ended: string
-    draw_proposed?: string
-    unverified_move: string 
-    __v: number
-    _id: string
-}
-   
-const ProfilePage = (props :{handlechoice: (data:GameAsJson)=> void, userdata: any}) => {
-//   console.log("profilepageprops", props)
+const ProfilePage = (props :{handlechoice: (data:GameAsJson)=> void, userdata: UserData}) => {
   let navigate = useNavigate();
   let [showCurrent, setShowCurrentState] = React.useState(true)
-  let [retrieveGames, setRetrieveGames] = React.useState<GameData>()
+  let [retrieveGames, setRetrieveGames] = React.useState<GameData[]>([])
   let [userstats, setUserStatsState] = React.useState({stats: "{\"W\":0, \"D\":0, \"L\":0}", open_games: 0,})
   
   React.useEffect(() => {    
@@ -34,7 +20,7 @@ const ProfilePage = (props :{handlechoice: (data:GameAsJson)=> void, userdata: a
   const askUserStats = () => {
     makeGETRequestAuth(`${server}/profile/${props.userdata.id}/stats`, setUserStats, "", props.userdata.accessToken)
   }
-  const setUserStats = (data: {stats: string, open_games: number}) => {
+  const setUserStats = (data: UserStats) => {
       setUserStatsState(data)
   }
   const setShowCurrent = () => {
@@ -57,18 +43,16 @@ const ProfilePage = (props :{handlechoice: (data:GameAsJson)=> void, userdata: a
                             props.userdata.accessToken)
                     
   }
-  const getNewGames = (data: GameData) => {
+  const getNewGames = (data: GameData[]) => {
       setRetrieveGames(data)
   }
-  const getOldGames = (data: GameData) => {
-            // console.log("getoldgames", data)
+  const getOldGames = (data: GameData[]) => {
       setRetrieveGames(data) 
   }
   const loadGame = (gameid: string) => {
     makeGETRequestAuth(`${server}/requestgamedata/${gameid}`, loadedGameRetrieved, "", props.userdata.accessToken) 
   }
   const loadedGameRetrieved = (data: GameData) => {
-    //   console.log(data, "loadedgameretrieved")
       let color = (data.player1id === props.userdata.id ? 1 : 0)
       let gamedata = JSON.parse(data.gameasjson, reviver)       
       gamedata.color = color

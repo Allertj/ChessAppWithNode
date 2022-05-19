@@ -21,7 +21,7 @@ class Game {
     moves : Array<Array<any>>= []
     movescount = 0
     last_selected : Array<number>= []
-    constructor(gameInfo: string="") {
+    constructor(gameInfo:Array<any>| null = null) {
         if (this.board.length === 0) {
             this.buildBoard(gameInfo)
         }
@@ -35,7 +35,7 @@ class Game {
     get latest_poss_as_string () {
         return this.latest_poss.map(value => value[0].toString()+value[1].toString())
     }
-    concedeGame(info: any) {
+    concedeGame() {
         this.status = status1.CONCEDED
     }
     drawGame() {
@@ -154,12 +154,14 @@ class Game {
             this.passed_pawn_removal.set([(destx + x) / 2, desty].join(","), [destx, desty]);
         }
     }
-    makeMoveInternal(board: any, x: number, y: number, destx: number, desty: number) {
+    makeMoveInternal(board: Array<Array<Piece | null>>, x: number, y: number, destx: number, desty: number) {
         let temp = board[x][y];
         board[x][y] = null;
-        [temp.x, temp.y] = [destx, desty];
-        board[destx][desty] = temp;
-        temp.moved = true;
+        if (temp) { 
+            [temp.x, temp.y] = [destx, desty] 
+            board[destx][desty] = temp;
+            temp.moved = true
+        }
         this.passed_pawn.clear();
         this.passed_pawn_removal.clear()
     }
@@ -169,14 +171,14 @@ class Game {
         this.makeMoveInternal(this.board, destx, desty, destx, rookmovement.get(desty) as number);
         this.makeMoveInternal(this.board, x, y, destx, kingmovement.get(desty) as number);
     }
-    makeMove(board: any, x: number, y: number, destx: number, desty: number, player: Player) {
+    makeMove(board: Array<Array<Piece | null>>, x: number, y: number, destx: number, desty: number, player: Player) {
         this.latest_poss = []
         this.last_selected = []
         this.movescount += 1
         let strike = board[destx][desty] ? " X " : " - "
         this.moves.push([this.board[x][y]?.player, x, y, destx, desty, this.movescount, strike, this.board[x][y]?.letter])
         // if (player !== this.turn) { return false; }
-        if (this.passed_pawn.has([x, y].join(",")) && board[x][y].letter === "P") {
+        if (this.passed_pawn.has([x, y].join(",")) && board[x][y]?.letter === "P") {
             if (this.passed_pawn.get([x, y].join(",")).join(",") === [destx, desty].join(",")) {
                 let [x1, y1] = this.passed_pawn_removal.get([destx, desty].join(","))
                 board[x1][y1] = null
@@ -194,8 +196,8 @@ class Game {
         this.latest_poss = []
         this.last_selected = []
         this.status = this.checkStatus(this.turn);
-        if (board[destx][desty].letter === "P") {
-            this.checkPromotion(board[destx][desty]);
+        if (board[destx][desty] && board[destx][desty]?.letter === "P") {
+            this.checkPromotion(board[destx][desty] as Piece);
             this.checkPassedPawn(x, y, destx, desty, player);
         }
     }
@@ -292,13 +294,15 @@ class Game {
         this.board[x][y] = newpiece
         this.promotion = {x : 8, y : 8, player : 2}
     }
-    buildBoard(gamei: any) {
+    buildBoard(gamei: Array<any> | null) {
+        if (gamei) {
         let newBoard = Array(8).fill(null).map(x => Array(8).fill(null));
         for (const piece in gamei) {
             let [x, y, piec, moved, player] = gamei[piece];
             newBoard[x][y] = Game.getInstanceOfPiece(x, y, piec, player, moved);
         }
-        this.board = newBoard; 
+        this.board = newBoard;
+        } 
     }
 }
 export { Game}

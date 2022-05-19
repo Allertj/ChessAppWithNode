@@ -6,6 +6,12 @@ interface UserData {
     stats : string,
     open_games: number,
     roles: Array<string>
+    message?: string
+}
+
+interface UserStats {
+    stats: string
+    open_games: number
 }
 
 interface GameAsJson {
@@ -26,4 +32,18 @@ interface GameAsJson {
     unverified_move?: string
 }
 
-export type {UserData, GameAsJson}
+interface GameData {
+    gameasjson: string
+    player0id: string
+    player1id: string
+    status: string
+    result: string
+    time_started: string
+    time_ended: string
+    draw_proposed?: string
+    unverified_move?: string 
+    __v: number
+    _id: string
+}
+
+export type {UserData, GameAsJson, GameData, UserStats}
