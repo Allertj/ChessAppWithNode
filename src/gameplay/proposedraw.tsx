@@ -1,4 +1,4 @@
-export const ProposeDraw = ({openMenu, drawAnswer}: {openMenu: Boolean, drawAnswer: (choice: boolean) =>{}}) => {
+export const ProposeDraw = ({openMenu, drawAnswer}: {openMenu: Boolean, drawAnswer: (choice: boolean) => void}) => {
     let choice = false
     const proposeDrawAnswer = () => {
       drawAnswer(choice)

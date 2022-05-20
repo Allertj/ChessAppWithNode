@@ -6,13 +6,14 @@ import { Rook } from './rook'
 import { Bishop } from './bishop'
 import { Knight } from './knight'
 import { Pawn } from './pawn'
+import { MoveNotation} from '../interfaces/interfaces'
 
 class Game {
     board : Array<Array<Piece | null>> = []
     turn : Player = Player.WHITE
-    id : number = 0
+    id : string = "0"
     color: number = 2
-    status = status1.PLAYING
+    status: string = status1.PLAYING
     passed_pawn = new Map()
     passed_pawn_removal = new Map()
     castling = new Map()
@@ -41,16 +42,17 @@ class Game {
     drawGame() {
         this.status = status1.DRAW
     }
-    getMoves() {
-        let result = []
-        let players = new Map([[1, "WHITE"], [0, "BLACK"]])
+    getMoves() : Array<MoveNotation>{
+        let result: Array<MoveNotation> = []
+        let players = new Map([[Player.WHITE, "WHITE"], [Player.BLACK, "BLACK"]])
+        // let players = new Map([[1, "WHITE"], [0, "BLACK"]])
         let letter = new Map([[7, "A"], [6, "B"], [5, "C"], [4, "D"], [3, "E"], [2, "F"], [1, "G"], [0, "H"]])
         for (let [player, x, y, destx, desty,, strike, piece] of this.moves) {
             let notation = letter.get(y)+(x+1).toString()+strike+letter.get(desty)+(destx+1).toString()
             if (Math.abs(y-desty) === 3 && piece === "M") { notation = "0-0" } 
             if (Math.abs(y-desty) === 4 && piece === "M") { notation = "0-0-0" }
             else { 
-                result.push({player: players.get(player), 
+                result.push({player: players.get(player) as string, 
                              piece: piece, 
                              notation: notation})
             }             

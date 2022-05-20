@@ -2,13 +2,25 @@ import React from 'react';
 import { Board , XYString, ReverseBoard } from './board';
 import { SideBar } from '../items/sidebar'
 import { replacer } from '../misc/helper'
+import { Game } from '../chess/game'
 import { Popup } from './promotion'
 import { ProposeDraw } from './proposedraw';
-import { Move, MSGPromotion, MSGProposeDraw, MSGDrawFinalized, MSGConcede, SendMoveVerified, SendPromotion } from './createsocket'
+import { Socket } from "socket.io-client";
+import {status1} from '../chess/misc'
+import { Move, MSGPromotion, MSGProposeDraw, MSGDrawFinalized, MSGConcede, SendMoveVerified, SendPromotion, SendMove } from './createsocket'
 
+interface BoardContainerProps {
+    game: Game
+    socket: Socket
+    userid: string
+    drawproposed: boolean
+    proposeDraw: () => void
+    drawAnswer: (drawAnswer: boolean) => void
+    concede: () => void
+    setDrawProposed: (state: boolean) => void
+}
 
-
-const BoardContainer = (gameid: any) => {
+const BoardContainer = (gameid: BoardContainerProps) => {
     const [board, setBoard] = React.useState(() => {return gameid.game.board})
     const [highlighted, setHighlighted] = React.useState(() => {return gameid.game.last_selected})
     const [options, setOptions] = React.useState(() => {return gameid.game.latest_poss_as_string})
@@ -16,14 +28,13 @@ const BoardContainer = (gameid: any) => {
     const [moves, setMoves] = React.useState(() => {return gameid.game.getMoves()})
 
     const verifyMove = (msg: Move) => {
-        let res = gameid.game.getPossibilities(msg.color, msg.x, msg.y).map(([x,y]: Array<number>)=> XYString(x,y))
+        let res = gameid.game.getPossibilities(msg.color, msg.x, msg.y, false).map(([x,y]: Array<number>)=> XYString(x,y))
         if (res.includes(XYString(msg.destx, msg.desty))) {
-            gameid.game.makeMove(gameid.game.board, msg.x, msg.y, msg.destx, msg.desty)
+            gameid.game.makeMove(gameid.game.board, msg.x, msg.y, msg.destx, msg.desty, gameid.game.color)
             document.getElementById(XYString(msg.destx, msg.desty))?.click()
             let newmsg = {move: msg, 
                           gameasjson: JSON.stringify(gameid.game, replacer)}
             SendMoveVerified(gameid.socket, newmsg)              
-            // gameid.socket.emit("move_verified", newmsg)
         }
     }
     React.useEffect(() => {
@@ -51,7 +62,7 @@ const BoardContainer = (gameid: any) => {
     }, [gameid.socket])
 
     const askPromotePiece = (piece: any) => {
-        // console.log("PROMOTION EMITTED", {piece: piece, 
+        console.log("PROMOTION EMITTED", piece) 
             // gameid: gameid.game.id, 
             // ...gameid.game.promotion}, "piece:", piece)
         SendPromotion(gameid.socket, {piece: piece, 
@@ -62,14 +73,17 @@ const BoardContainer = (gameid: any) => {
                                         //  ...gameid.game.promotion})   
      }
 
-    const updateFromBoard = ([x, y]: Array<any>) => {
+    const updateFromBoard = ([x, y]: Array<number>) => {
         if (status === "Draw" || status === "Conceded" || status === "You have conceeded" || status === "Other player has conceeded") {return }
         if (!options.includes(XYString(x, y))) {
-            gameid.game.getPossibilities(Number(gameid.game.color), x, y)
+            gameid.game.getPossibilities(Number(gameid.game.color), x, y, false)
             
         } else {
-            gameid.game.makeMove(gameid.game.board, highlighted[0],highlighted[1], x, y)
-            gameid.socketsend({type: "move", content: [highlighted[0],highlighted[1], x, y], token: gameid.token})
+            gameid.game.makeMove(gameid.game.board, highlighted[0],highlighted[1], x, y, gameid.game.color)
+            SendMove(gameid.socket,{x: highlighted[0], y: highlighted[1], destx: x, desty: y, 
+                                    gameid: gameid.game.id, 
+                                    color: gameid.game.color, 
+                                    sender: gameid.userid})
         }       
         setBoard(gameid.game.board)
         setOptions(gameid.game.latest_poss_as_string)

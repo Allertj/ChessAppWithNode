@@ -1,17 +1,19 @@
+import { MoveNotation } from '../interfaces/interfaces'
+
 type SideBarArgs = {
   concede: () => void
-  moves: Array<string>
   proposeDraw: () => void
   setStatus: (data: string) => void
+  moves: Array<MoveNotation>
   status: string
 }
 
 const SideBar = (data: SideBarArgs) => {
-    let white = data.moves.filter((move : any) => move.player === "WHITE")
-           .map((moves: any) => 
+    let white = data.moves.filter((move : MoveNotation) => move.player === "WHITE")
+           .map((moves: MoveNotation) => 
                  <div key={moves.notation}>{moves.piece !== "P" && moves.piece} {moves.notation}</div>)
-    let black = data.moves.filter((move: any) => move.player === "BLACK")
-           .map((moves: any) => 
+    let black = data.moves.filter((move: MoveNotation) => move.player === "BLACK")
+           .map((moves: MoveNotation) => 
                  <div key={moves.notation}>{moves.piece !== "P" && moves.piece} {moves.notation}</div>)
     const concede = () => {
         data.setStatus("You have conceded")

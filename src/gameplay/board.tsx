@@ -2,6 +2,7 @@ import { Piece } from './queen'
 import { useDrop } from 'react-dnd'
 import { DndProvider } from 'react-dnd'
 import { HTML5Backend } from 'react-dnd-html5-backend'
+import {Piece as PieceClass} from '../chess/piece'
 
 const figures = [new Map([["Q", "♕"], ["M", "♔"], ["R", "♖"],["K", "♘"], ["B", "♗"], ["P", "♙"]]),
                  new Map([["Q", "♛"], ["M", "♚"], ["R", "♜"],["K", "♞"], ["B", "♝"], ["P", "♟"]])
@@ -28,7 +29,7 @@ const Construct = (x: number, y: number, row: React.ReactElement[], data: any) =
     let highlight = (data.highlighted[0] && XYString(data.highlighted[0], data.highlighted[1]) === id) ? " currentlyselected" : ""
     let option = (data.options.includes(id)) ? " options" : ""
     let base = baseCell(x,y);
-    let piece = data.board[x][y] ? figures[data.board[x][y].player].get(data.board[x][y].letter) : ""
+    let piece = data.board[x][y] ? figures[data.board[x][y]?.player].get(data.board[x][y].letter) : ""
 
     row.push(<Cell  key={id} 
                     id={id}  
@@ -39,7 +40,25 @@ const Construct = (x: number, y: number, row: React.ReactElement[], data: any) =
     return row                
 }
 
-const Board = (data: any) => {
+interface BoardProps {
+    board: Array<Array<PieceClass | null>>
+    highlighted: number[]
+    options: Array<string>
+    signalMove: (data: Array<any>) => void
+    status: string
+}
+    
+interface CellProps {
+    classes: string
+    drops: boolean
+    id: string
+    key: string
+    piece: string | undefined
+    signalMove: (data: Array<any>) => void
+}
+    
+const Board = (data: BoardProps) => {
+    console.log(data.options, "Board options")
     let fulltable = []
     for (let x = 0; x < data.board.length; x++) {
         let row : Array<any> = []
@@ -54,7 +73,7 @@ const Board = (data: any) => {
                              {[...fulltable]}</tbody></table></DndProvider></div>)
 }
 
-const ReverseBoard = (data: any) => {
+const ReverseBoard = (data: BoardProps) => {
     let fulltable = []
     for (let x = 7; x > -1; x--) {
         let row : Array<any> = []
@@ -69,11 +88,11 @@ const ReverseBoard = (data: any) => {
                              {[...fulltable]}</tbody></table></DndProvider></div>)
 }
 
-const Cell = (data: any) => {
+const Cell = (data: CellProps) => {
     const click = () => {
         data.signalMove(XY(" " + data.id))
     }
-    const dummy = (data1: any) => {
+    const dummy = (data1: string) => {
         data.signalMove(XY(" " + data1))
     }
     const [, drop] = useDrop(

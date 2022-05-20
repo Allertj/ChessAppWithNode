@@ -1,7 +1,7 @@
 import React from 'react'
 import { useDrag } from 'react-dnd'
 
-function Piece({piece, typeletter, clickfunc, id}: any) {
+function Piece({piece, typeletter, clickfunc, id}: {piece: string | undefined, typeletter: string, id: string, clickfunc: (data: string)=>void}) {
   const [{isDragging}, drag] = useDrag(() => (
     {
     type: "Piece",

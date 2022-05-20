@@ -45,5 +45,10 @@ interface GameData {
     __v: number
     _id: string
 }
+type MoveNotation = {
+    player: string,
+    piece: string,
+    notation: string
+  }
 
-export type {UserData, GameAsJson, GameData, UserStats}
+export type {UserData, GameAsJson, GameData, UserStats, MoveNotation}
