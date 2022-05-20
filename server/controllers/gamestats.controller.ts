@@ -15,6 +15,7 @@ const editGame = async (id: String, obj: GameModel) => {
         .forEach(key => {
           if (game) { game[key as keyof GameModel] = obj[key as keyof GameModel]}
         });
+        game.last_change = new Date().toUTCString()
         game.save()
       }
     } catch (err) {
@@ -49,7 +50,7 @@ const editGame = async (id: String, obj: GameModel) => {
     data.status = "Ended"
     game.toObject();
     delete game.draw_proposed
-    game.time_ended = new Date().toUTCString()
+    game.last_change = new Date().toUTCString()
     game.gameasjson = JSON.stringify(data)
     game.save()
     }

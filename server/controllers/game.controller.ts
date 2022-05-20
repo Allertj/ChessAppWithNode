@@ -38,6 +38,7 @@ const createNewGameinDB = async (player0id: String) => {
 const startGame = async (req: Request, res: Response, game: GameModelDB, user: UserModelDB) => {
     try {
         game.time_started = new Date().toUTCString()
+        game.last_change = new Date().toUTCString()
         game.status = "Playing"
         game.player1id = user._id  
         await game.save()

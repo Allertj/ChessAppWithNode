@@ -38,6 +38,7 @@ interface GameData {
     player1id: string
     status: string
     result: string
+    last_change: string
     time_started: string
     time_ended: string
     draw_proposed?: string

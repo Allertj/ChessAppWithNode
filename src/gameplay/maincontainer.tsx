@@ -31,7 +31,7 @@ const MainContainer = (data: {gamedata: GameAsJson, userdata: UserData}) => {
         const game = Object.assign(new Game(), data.gamedata)
         let socket = React.useRef(createSocket(data.userdata.accessToken, data.userdata.id))
         React.useEffect(() => {
-            if (data.gamedata.status === "Endend") {
+            if (data.gamedata.status === "Ended") {
                 data.gamedata.unverified_move = undefined
                 data.gamedata.color = 2
              }

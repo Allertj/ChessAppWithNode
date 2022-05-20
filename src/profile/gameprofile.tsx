@@ -1,6 +1,7 @@
 interface GameProfileArgs {gameid: string, 
                            status: string, 
                            result: string,
+                           last_change: string,
                            opponent: string, 
                            loadGame: (data: string) => void}
 

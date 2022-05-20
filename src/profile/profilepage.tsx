@@ -11,10 +11,18 @@ const ProfilePage = (props :{handlechoice: (data:GameAsJson)=> void, userdata: U
   let [showCurrent, setShowCurrentState] = React.useState(true)
   let [retrieveGames, setRetrieveGames] = React.useState<GameData[]>([])
   let [userstats, setUserStatsState] = React.useState({stats: "{\"W\":0, \"D\":0, \"L\":0}", open_games: 0,})
-  
+
   React.useEffect(() => {    
-      askNewGames()
-      askUserStats()
+          askNewGames()
+          askUserStats()
+  }, [])
+
+  React.useEffect(() => {    
+      const interval = setInterval(() => {
+            askNewGames()
+            askUserStats()
+    }, 5000)
+    return () => clearInterval(interval)
   }, [])
 
   const askUserStats = () => {

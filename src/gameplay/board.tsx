@@ -58,7 +58,6 @@ interface CellProps {
 }
     
 const Board = (data: BoardProps) => {
-    console.log(data.options, "Board options")
     let fulltable = []
     for (let x = 0; x < data.board.length; x++) {
         let row : Array<any> = []
