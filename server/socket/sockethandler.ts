@@ -8,7 +8,7 @@ import {Server, Socket} from 'socket.io'
 
 const Game = db.game;
 
-function startSocket(io: Server){
+function startSocket(io: Server) {
     io.use((socket : Socket, next: () => void) => {
         Jwt.verify(socket.handshake.auth.token, process.env.REACT_APP_SECRET as string, (err: any, decoded: any) => {
           if (decoded) { 

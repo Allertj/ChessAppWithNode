@@ -340,7 +340,6 @@ class Game {
                 }
             }
         }
-        console.log(moves)
         return false
     }
     promotePiece(x: number, y: number, player: Player, choice: string) {

@@ -5,13 +5,14 @@ import { replacer } from '../misc/helper'
 import { Game } from '../chess/game'
 import { Popup } from './promotion'
 import { ProposeDraw } from './proposedraw';
-import { Socket } from "socket.io-client";
-import {status1} from '../chess/misc'
-import { Move, MSGPromotion, MSGProposeDraw, MSGDrawFinalized, MSGConcede, SendMoveVerified, SendPromotion, SendMove } from './createsocket'
+import {SocketCom} from './createsocket'
+// import { Socket } from "socket.io-client";
+// import {status1} from '../chess/misc'
+import { MSGPromotion, MSGProposeDraw, MSGDrawFinalized, MSGConcede, Move} from './createsocket'
 
 interface BoardContainerProps {
     game: Game
-    socket: Socket
+    socketCom: SocketCom
     userid: string
     drawproposed: boolean
     proposeDraw: () => void
@@ -34,35 +35,35 @@ const BoardContainer = (gameid: BoardContainerProps) => {
             document.getElementById(XYString(msg.destx, msg.desty))?.click()
             let newmsg = {move: msg, 
                           gameasjson: JSON.stringify(gameid.game, replacer)}
-            SendMoveVerified(gameid.socket, newmsg)              
+            gameid.socketCom.SendMoveVerified(newmsg)              
         }
     }
     React.useEffect(() => {
-        gameid.socket.on("othermove", (msg: Move) => {
+        gameid.socketCom.receiveOtherMove((msg: Move) => {
             verifyMove(msg)
         })
-        gameid.socket.on("promotion_received",  (msg: MSGPromotion) => {
+        gameid.socketCom.receivePromotion((msg: MSGPromotion) => {
             let {x, y, player, piece} = msg
             gameid.game.promotePiece(x, y, player, piece) 
             setStatus("Playing")
         })
-        gameid.socket.on("draw_proposed", (msg: MSGProposeDraw) => {
+        gameid.socketCom.receiveDrawPromotion((msg: MSGProposeDraw) => {
             gameid.setDrawProposed(true)
         })
-        gameid.socket.on("draw_finalised", (msg: MSGDrawFinalized) => {
+        gameid.socketCom.receiveDrawFinalised((msg: MSGDrawFinalized) => {
             if (msg.result === "accepted") {
                 setStatus("Draw")
                 gameid.game.drawGame()
             }
         })
-        gameid.socket.on("other_player_has_conceded", (msg: MSGConcede) => {
+        gameid.socketCom.receiveConcession((msg: MSGConcede) => {
             setStatus("Other player has conceeded")
             gameid.game.concedeGame()
         })
-    }, [gameid.socket])
+    }, [gameid.socketCom.socket])
 
     const askPromotePiece = (piece: string) => {
-        SendPromotion(gameid.socket, {piece: piece, 
+        gameid.socketCom.SendPromotion({piece: piece, 
                                       gameid: gameid.game.id, 
                                       ...gameid.game.promotion})  
      }
@@ -75,7 +76,7 @@ const BoardContainer = (gameid: BoardContainerProps) => {
         } else {
             gameid.game.makeMove(gameid.game.board, highlighted[0],highlighted[1], x, y, gameid.game.color)
             // console.log(JSON.stringify(gameid.game))
-            SendMove(gameid.socket,{x: highlighted[0], y: highlighted[1], destx: x, desty: y, 
+            gameid.socketCom.SendMove({x: highlighted[0], y: highlighted[1], destx: x, desty: y, 
                                     gameid: gameid.game.id, 
                                     gameasjson:JSON.stringify(gameid.game, replacer),
                                     color: gameid.game.color, 

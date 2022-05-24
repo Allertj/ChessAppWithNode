@@ -3,12 +3,14 @@ import { BoardContainer } from './boardcontainer'
 import { Game } from '../chess/game'
 import { XYString } from './board'
 import { replacer } from '../misc/helper';
-import { createSocket } from './createsocket';
+import { SocketCom } from './createsocket';
+import { server } from '../config'
 import { UserData, GameAsJson } from '../interfaces/interfaces'
-import { Socket } from "socket.io-client";
-import { SendProposeDraw, SendDrawAccepted, SendDrawDeclined, SendConcession, SendMove, SendInitiation, SendMoveVerified} from './createsocket'
+// import { Socket } from "socket.io-client";
 
-const verifyMove = (unverified_move: string, id: string, game: Game, socket: Socket) => {
+// import { SendProposeDraw, SendDrawAccepted, SendDrawDeclined, SendConcession, SendMove, SendInitiation, SendMoveVerified} from './createsocket'
+
+const verifyMove = (unverified_move: string, id: string, game: Game, socketCom: SocketCom) => {
     let {x, y, destx, desty, sender, color} = JSON.parse(unverified_move)
     if (game.board[x][y] && sender === id) {
         game.makeMove(game.board, x, y, destx, desty, color)
@@ -20,8 +22,8 @@ const verifyMove = (unverified_move: string, id: string, game: Game, socket: Soc
             document.getElementById(XYString(destx, desty))?.click()
             let newmsg = {move: JSON.parse(unverified_move), 
                           gameasjson: JSON.stringify(game, replacer)}
-            if (!socket) {return} 
-            SendMoveVerified(socket, newmsg)             
+            if (!socketCom) {return} 
+            socketCom.SendMoveVerified(newmsg)             
         }
     }    
 }
@@ -29,7 +31,8 @@ const verifyMove = (unverified_move: string, id: string, game: Game, socket: Soc
 const MainContainer = (data: {gamedata: GameAsJson, userdata: UserData}) => {  
         const [drawproposed, setDrawProposed] = React.useState(() => {return false})
         const game = Object.assign(new Game(), data.gamedata)
-        let socket = React.useRef(createSocket(data.userdata.accessToken, data.userdata.id))
+        let socketCom = new SocketCom(data.userdata.accessToken, data.userdata.id, server)
+        // let socket = React.useRef(createSocket(data.userdata.accessToken, data.userdata.id))
         React.useEffect(() => {
             if (data.gamedata.status === "Ended") {
                 data.gamedata.unverified_move = undefined
@@ -39,7 +42,7 @@ const MainContainer = (data: {gamedata: GameAsJson, userdata: UserData}) => {
         }, [data, game])     
         React.useEffect(() => {
             if (data.gamedata.unverified_move) {
-                verifyMove(data.gamedata.unverified_move, data.userdata.id, game, socket.current)
+                verifyMove(data.gamedata.unverified_move, data.userdata.id, game, socketCom)
              }
 
         }, [data, game])                  
@@ -51,27 +54,27 @@ const MainContainer = (data: {gamedata: GameAsJson, userdata: UserData}) => {
         }, [data.gamedata.draw_proposed, data.userdata.id])
 
         React.useEffect(() => {
-            SendInitiation(socket.current, {gameid: game.id})           
+            socketCom.SendInitiation({gameid: game.id})           
         }, [game.id]);
                                
         const concede = () => {
             game.concedeGame()
-            SendConcession(socket.current, {gameid: game.id, 
+            socketCom.SendConcession({gameid: game.id, 
                                             color: game.color, 
                                             sender: data.userdata.id})
         }
         const proposeDraw = () => {   
-            SendProposeDraw(socket.current,  {gameid: game.id, 
+            socketCom.SendProposeDraw({gameid: game.id, 
                                               sender: data.userdata.id})
         }
         const drawAnswer = (drawAnswer: boolean) => {
             setDrawProposed(false)
             if (drawAnswer) {         
-                SendDrawAccepted(socket.current, {gameid: game.id, 
+                socketCom.SendDrawAccepted({gameid: game.id, 
                                                   sender:data.userdata.id, 
                                                   gameasjson: JSON.stringify(game, replacer)})         
             } else {
-                SendDrawDeclined(socket.current, {gameid: game.id, 
+                socketCom.SendDrawDeclined({gameid: game.id, 
                                                   sender:data.userdata.id})
             }
         }
@@ -79,10 +82,10 @@ const MainContainer = (data: {gamedata: GameAsJson, userdata: UserData}) => {
                                 proposeDraw={proposeDraw}
                                 drawAnswer={drawAnswer}
                                 concede={concede}
+                                socketCom={socketCom}
                                 drawproposed={drawproposed}
                                 setDrawProposed={setDrawProposed}
-                                userid={data.userdata.id}
-                                socket={socket.current}/>)
+                                userid={data.userdata.id}/>)
 }
 
 export { MainContainer }
