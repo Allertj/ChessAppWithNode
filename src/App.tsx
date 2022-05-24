@@ -52,9 +52,9 @@ const Page = () => {
                     username={userdata ? userdata.username : ""}/> 
             <Routes>
                 <Route path="/" 
-                       element={<LoginScreen login={saveUserData}/>} />
+                       element={standard} />
                 <Route path="/login" 
-                       element={<LoginScreen login={saveUserData}/>} />       
+                       element={standard} />       
                 <Route path="/register" 
                        element={<Register/>} />     
                 <Route path="/profile" 

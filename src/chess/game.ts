@@ -22,7 +22,7 @@ class Game {
     moves : Array<Array<any>>= []
     movescount = 0
     last_selected : Array<number>= []
-    constructor(gameInfo:Array<any>| null = null) {
+    constructor(gameInfo:any = null) {
         if (this.board.length === 0) {
             this.buildBoard(gameInfo)
         }
@@ -118,7 +118,11 @@ class Game {
         let checkPlayer = 1 - this.turn;
         let inCheck = this.checkForCheck(checkPlayer, this.board);
         let legalMoves = this.checkIfAnyLegalMove(player);
+        let drawByToFewPiece = this.checkPieceAmount(this.board);
+        let drawByRepetition = this.drawByRepetition()
         switch (true) {
+            case (drawByRepetition === true): return status1.DRAW;
+            case (drawByToFewPiece === true): return status1.DRAW;
             case (inCheck === true && legalMoves === false):  return status1.CHECKMATE;
             case (inCheck === false && legalMoves === false): return status1.STALEMATE;
             case (inCheck === true && legalMoves === true):   return status1.CHECK;
@@ -291,14 +295,62 @@ class Game {
             default : return null
         }
     }
+    getColorOfField = (x : number, y : number) => {
+        if ((x % 2 === 0 && y % 2 === 1) || (y % 2 === 0 && x % 2 === 1)) {
+            return "black" 
+        } else { 
+            return "white" 
+        }   
+    }
+    checkPieceAmount(board: Array<Array<Piece | null>>) {
+        let count : Array<Piece>= []
+        for (let i of board.flat()) {
+            if (i) 
+                count.push(i)
+            if (count.length > 4) {
+                return false
+            }    
+        }   
+        if (count.length === 4) {
+            let bishops = count.filter(e => e.typeletter === 'B')
+            let bishopsblack = count.filter(e => this.getColorOfField(e.x, e.y) === "black")
+            let bishopswhite = count.filter(e => this.getColorOfField(e.x, e.y) === "white")
+            if (bishops.length === 2 && (bishopswhite.length === 2 || bishopsblack.length === 2)) {
+                return true
+            }
+            return false
+        }
+        if (count.length === 3) {
+            if (count.some(e => e.typeletter === 'Q' || e.typeletter === 'R')) {
+                return false
+            }
+        }
+        return true
+    }
+    drawByRepetition(){
+        let moves = new Map()
+        for (let i of this.moves) {
+            let move = `${i[0]}${i[1]}${i[2]}${i[3]}${i[4]}`
+            if (!moves.has(move)) {
+                 moves.set(move, 1)
+            } else {
+                moves.set(move, moves.get(move)+1)
+                if (moves.get(move) === 3) {
+                    return true
+                }
+            }
+        }
+        console.log(moves)
+        return false
+    }
     promotePiece(x: number, y: number, player: Player, choice: string) {
         let newpiece = Game.getInstanceOfPiece(x, y, choice, player, true)
         this.board[x][y] = newpiece
         this.promotion = {x : 8, y : 8, player : 2}
     }
-    buildBoard(gamei: Array<any> | null) {
+    buildBoard(gamei: any) {
         if (gamei) {
-        let newBoard = Array(8).fill(null).map(x => Array(8).fill(null));
+             let newBoard = Array(8).fill(null).map(x => Array(8).fill(null));
         for (const piece in gamei) {
             let [x, y, piec, moved, player] = gamei[piece];
             newBoard[x][y] = Game.getInstanceOfPiece(x, y, piec, player, moved);

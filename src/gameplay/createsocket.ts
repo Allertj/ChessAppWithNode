@@ -9,7 +9,7 @@ interface GameAsJson {gameasjson: string}
 
 interface MSGInitiate extends GameId {}
 
-interface MSGMove extends Move, GameId, Sender {}
+interface MSGMove extends Move, GameId, Sender, GameAsJson {}
 interface MSGMoveVerified extends GameAsJson{ move: Move }                            
 interface MSGConcede extends GameId, Sender{ color: number, }                        
 interface MSGProposeDraw extends GameId, Sender {}
@@ -20,6 +20,40 @@ interface MSGPromotion extends GameId{ piece: string,
                                        y: number, 
                                        player: number}
 interface MSGDrawFinalized {result: string}   
+
+class SocketCom {
+  socket: Socket
+  constructor(token: string, id: string, endpoint: string) {
+    this.socket = socketIOClient(endpoint, {
+      auth: {
+          token: token,
+          id: id
+      }})  
+    this.socketInit()      
+  }
+  socketInit() {
+    this.socket.on("connectaa", (msg) => {
+      console.log("connected to socket:", msg)
+    })
+    this.socket.on("disconnect", () => {
+      console.log("disconnected from socket:", this.socket.id); 
+    });    
+  }
+  SendInitiation   = (msg: MSGInitiate)     => { this.socket.emit("initiate", msg)}  
+  SendMove         = (msg: MSGMove)         => { this.socket.emit("move", msg)}                                                         
+  SendConcession   = (msg: MSGConcede)      => { this.socket.emit("concede", msg)}   
+  SendProposeDraw  = (msg: MSGProposeDraw)  => { this.socket.emit("propose_draw", msg)}                             
+  SendDrawAccepted = (msg: MSGDrawAccepted) => { this.socket.emit("draw_accepted", msg)} 
+  SendDrawDeclined = (msg: MSGDrawDeclined) => { this.socket.emit("draw_declined", msg)}                            
+  SendMoveVerified = (msg: MSGMoveVerified) => { this.socket.emit("move_verified", msg)}   
+  SendPromotion    = (msg: MSGPromotion)    => { this.socket.emit("promotion", msg)}  
+  AddSocketObserver(connectEvent: string, callback: () => void) {
+    this.socket.on(connectEvent, callback);
+  }
+}
+
+
+
 
 const SendInitiation   = (socket: Socket, msg: MSGInitiate)     => { socket.emit("initiate", msg)}  
 const SendMove         = (socket: Socket, msg: MSGMove)         => { socket.emit("move", msg)}                               
@@ -52,4 +86,4 @@ const createSocket = (token: string, id: string) => {
 export type { Move, MSGPromotion, MSGProposeDraw, MSGDrawFinalized, 
               MSGConcede, MSGMoveVerified, MSGDrawDeclined, MSGDrawAccepted, MSGMove, MSGInitiate }
 export { createSocket, SendInitiation, SendMove, SendConcession, 
-         SendProposeDraw, SendDrawAccepted, SendDrawDeclined, SendMoveVerified, SendPromotion }   
+         SendProposeDraw, SendDrawAccepted, SendDrawDeclined, SendMoveVerified, SendPromotion, SocketCom }   

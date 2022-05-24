@@ -9,12 +9,13 @@ type SideBarArgs = {
 }
 
 const SideBar = (data: SideBarArgs) => {
+    // data.moves.length
     let white = data.moves.filter((move : MoveNotation) => move.player === "WHITE")
-           .map((moves: MoveNotation) => 
-                 <div key={moves.notation}>{moves.piece !== "P" && moves.piece} {moves.notation}</div>)
+           .map((moves: MoveNotation, index: number) => 
+                 <div key={moves.notation+index}>{moves.piece !== "P" && moves.piece} {moves.notation}</div>)
     let black = data.moves.filter((move: MoveNotation) => move.player === "BLACK")
-           .map((moves: MoveNotation) => 
-                 <div key={moves.notation}>{moves.piece !== "P" && moves.piece} {moves.notation}</div>)
+           .map((moves: MoveNotation, index: number) => 
+                 <div key={moves.notation+index}>{moves.piece !== "P" && moves.piece} {moves.notation}</div>)
     const concede = () => {
         data.setStatus("You have conceded")
         data.concede()

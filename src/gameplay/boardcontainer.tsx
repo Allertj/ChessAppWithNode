@@ -61,16 +61,10 @@ const BoardContainer = (gameid: BoardContainerProps) => {
         })
     }, [gameid.socket])
 
-    const askPromotePiece = (piece: any) => {
-        console.log("PROMOTION EMITTED", piece) 
-            // gameid: gameid.game.id, 
-            // ...gameid.game.promotion}, "piece:", piece)
+    const askPromotePiece = (piece: string) => {
         SendPromotion(gameid.socket, {piece: piece, 
                                       gameid: gameid.game.id, 
-                                      ...gameid.game.promotion})
-        // gameid.socket.emit("promotion", {piece: piece, 
-                                        //  gameid: gameid.game.id, 
-                                        //  ...gameid.game.promotion})   
+                                      ...gameid.game.promotion})  
      }
 
     const updateFromBoard = ([x, y]: Array<number>) => {
@@ -80,8 +74,10 @@ const BoardContainer = (gameid: BoardContainerProps) => {
             
         } else {
             gameid.game.makeMove(gameid.game.board, highlighted[0],highlighted[1], x, y, gameid.game.color)
+            // console.log(JSON.stringify(gameid.game))
             SendMove(gameid.socket,{x: highlighted[0], y: highlighted[1], destx: x, desty: y, 
                                     gameid: gameid.game.id, 
+                                    gameasjson:JSON.stringify(gameid.game, replacer),
                                     color: gameid.game.color, 
                                     sender: gameid.userid})
         }       
