@@ -9,5 +9,5 @@ All the important variables are stored in the .env file in the root. The first b
 
 You can also use production variables. This variant uses Docker and Docker-compose to easily start, and has its own MongoDB container. Comment out the development block in the .env file, uncomment the "production variables" block. If you want to use SSL-certificates comment out that block and provide your own certificates in the ssl directory, and possibly change them in the .env file. To build use "docker-compose build". In rare cases an access error is thrown, which can be solved by using "sudo docker-compose build" if you are using Linux. 
 
-After the build process is complete, run "docker-compose up". Three docker containers, the frontend, backend and the mongo database should come only.
+After the build process is complete, run "docker-compose up". Three docker containers, the frontend, backend and the mongo database should come online. Use "localhost:{PRODUCTION_PORT}" to visit the app. 
 

@@ -8,7 +8,6 @@ interface Sender {sender: string}
 interface GameAsJson {gameasjson: string}
 
 interface MSGInitiate extends GameId {}
-
 interface MSGMove extends Move, GameId, Sender, GameAsJson {}
 interface MSGMoveVerified extends GameAsJson{ move: Move }                            
 interface MSGConcede extends GameId, Sender{ color: number, }                        
