@@ -7,7 +7,7 @@ const NavBar = ({username, handleLogout} : {username: string, handleLogout: () =
                              <div className="nav-item"><Link className="link" to="register">Register</Link></div></>
     const loginconf = (username !== "") ? loggedinmenu : loggedoutmenu
     return (<header className="navbar">
-              <div id="title">CHESS - {username}</div>
+              <div id="title">{(username === "") ? "CHESS" : `CHESS - ${username}`}</div>
               <div className="nav-filler"></div>
                 {loginconf}
             </header>) 

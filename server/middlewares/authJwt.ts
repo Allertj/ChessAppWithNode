@@ -28,8 +28,6 @@ const verifyToken = (req : Request, res : Response, next : NextFunction) => {
   });
 };
 
-
-
 const isAdmin = async (req : Request, res : Response, next : NextFunction) => {
     hasRole(req, res, next, "admin", "Require Admin Role");
 }   

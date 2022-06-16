@@ -42,7 +42,7 @@ const ProfilePageHolder = (data: GameProfileProps) => {
              <div className="buttons--field">
              <div className="buttons--item">
                   <button onClick={data.setShowCurrent}>
-                    {data.showCurrent ? "See past games" : "see current games"}</button>
+                    {data.showCurrent ? "See past games" : "See current games"}</button>
               </div>
               <div className="buttons--item">
                   <button onClick={data.createNewGame}>Open/Join New Game</button>
@@ -53,4 +53,4 @@ const ProfilePageHolder = (data: GameProfileProps) => {
        </div>)
 }
 
-export {ProfilePageHolder}
+export { ProfilePageHolder }

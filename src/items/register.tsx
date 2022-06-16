@@ -23,7 +23,7 @@ const Register = () => {
                 <div className='center-form'><label>Email</label></div>
                 <div><input type="text" name="email" onChange={setData} value={formData.email}/></div>
                 {/* <div>{message}</div> */}
-                <div className='center-form'><label>Nickname</label></div>
+                <div className='center-form'><label>Username</label></div>
                 <div><input type="text" name="username" onChange={setData} value={formData.username}/></div>
                 {/* <div>{data.messages.usernamemsg}</div> */}
                 <div className='center-form'><label>Password</label></div>

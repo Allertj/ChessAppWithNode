@@ -32,13 +32,15 @@ chessRoutes(app)
 
 //Add Socket
 import { Server} from 'socket.io'
-import { startSocket } from './socket/sockethandler'
+import { startSocket, enableVerification } from './socket/sockethandler'
 const io = new Server(server, {cors: {origin: "*"}})
+// const socketAdapter = new SocketAdapter(io)
+enableVerification(io)
 startSocket(io)
 
 // Start database
-import {initial} from './initiatedb'
-import {db} from './models'
+import { initial } from './initiatedb'
+import { db } from './models'
 
 db.mongoose
     .connect(`mongodb://${process.env.DBHOST}:${process.env.DBPORT}/${process.env.DBNAME}`)

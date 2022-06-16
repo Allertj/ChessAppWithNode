@@ -1,7 +1,7 @@
 import { authJwt } from '../middlewares/authJwt'
 import { db } from '../models'
-import { checkDuplicateUsername, checkDuplicateEmail, checkRolesExisted } from '../middlewares/verifySignUp'
-import { signup } from "../controllers/auth.controller";
+// import { checkDuplicateUsername, checkDuplicateEmail, checkRolesExisted } from '../middlewares/verifySignUp'
+// import { signup } from "../controllers/auth.controller";
 import { startGame, createNewGame } from '../controllers/game.controller'
 import {Request, Response, Application}  from 'express'
 require('dotenv').config();
@@ -17,11 +17,11 @@ const chessRoutes = (app: Application) => {
         res.send("SERVER WORKING PROPERLY")
         res.end()
     })
-    app.post("/api/auth/signup",  [
-        checkDuplicateUsername,
-        checkDuplicateEmail,
-        checkRolesExisted
-    ], signup);
+    // app.post("/api/auth/signup",  [
+    //     checkDuplicateUsername,
+    //     checkDuplicateEmail,
+    //     checkRolesExisted
+    // ], signup);
 
     app.get("/profile/:id/stats", authJwt.verifyToken, async (req : Request, res : Response) => {
         res.header("Access-Control-Allow-Origin", "*");

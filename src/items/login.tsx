@@ -4,7 +4,6 @@ import { server } from '../config'
 import { useNavigate } from "react-router-dom";
 import { UserData } from '../interfaces/interfaces'
 
-
 const LoginScreen = ({login}: {login: (data: UserData) =>void}) => {
   let [messages, updateMessage] = React.useState("")
   const [formData, setFormData] = React.useState({ username: "", password: "", })
@@ -35,7 +34,7 @@ const LoginScreen = ({login}: {login: (data: UserData) =>void}) => {
 
   return (<div className='login'>
             <form onSubmit={submitForm}>
-              <div className='center-form'><label>Email</label></div>
+              <div className='center-form'><label>Username</label></div>
               <div><input type="text" name="username" onChange={setData} value={formData.username}/></div>
               <div className='center-form'><label>Password</label></div>
               <div><input type="text" name="password" onChange={setData} value={formData.password}/></div>

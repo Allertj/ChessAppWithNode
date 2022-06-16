@@ -8,33 +8,38 @@ import {RoleModel} from "../models/role.model"
 const User = db.user;
 const Role = db.role;
 
-const signup = async (req : Request, res : Response) => {
+const createUser = async (username: string, email: string, password: string, reqroles: any) => {
   const user = new User({
-    username: req.body.username,
-    email: req.body.email,
+    username: username,
+    email: email,
     open_games: 0,
-    password: bcrypt.hashSync(req.body.password as string, 8)
+    password: bcrypt.hashSync(password as string, 8)
   });
-  try {
       await user.save()
-      if (req.body.roles) {
-         let roles = await Role.find({ name: { $in: req.body.roles }})
+      if (reqroles) {
+         let roles = await Role.find({ name: { $in: reqroles }})
          let result = roles.map((role : RoleModel) => role._id);
          user.roles = result as [{ type: Schema.Types.ObjectId; ref: "Role", name: string}]
-         await user.save()
-         res.send({ message: "User was registered successfully!" });
+         return await user.save()
       } else {
         let role = await Role.findOne({ name: "user" })
         if (role) { 
         user.roles = [role._id];   
-        await user.save()    
-        res.send({ message: "User was registered successfully!" });}
+        return await user.save()    
+      }
       } 
+}
+
+
+const signup = async (req : Request, res : Response) => {
+  try {
+    await createUser(req.body.username, req.body.email, req.body.password, req.body.roles)
+    res.send({ status: 200, message: "User was registered successfully!" });
   } catch (err) {
-      res.status(500).send({ message: err as string });
-      return;
+     res.status(500).send({ message: err as string });
   }
-};
+}
+
 const signin = (req : Request, res : Response) => {
   User.findOne({
     username: req.body.username
@@ -60,11 +65,11 @@ const signin = (req : Request, res : Response) => {
       const token = jwt.sign({ id: user.id }, process.env.REACT_APP_SECRET as string, {
         expiresIn: 86400 // 24 hours
       });
-      const authorities = [];
+      const authorities : any[] = [];
 
       if (user.roles) {
       for (let i = 0; i < user.roles.length; i++) {
-          authorities.push("ROLE_" + user.roles[i].name.toUpperCase());
+          authorities.push("ROLE_"  + user.roles[i].name.toUpperCase());
       }
       }
       res.status(200).send({
@@ -79,4 +84,4 @@ const signin = (req : Request, res : Response) => {
     });
 };
 
-export { signup, signin}
+export { signup, signin, createUser}

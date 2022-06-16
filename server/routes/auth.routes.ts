@@ -9,13 +9,16 @@ const authRoutes = (app: Application) => {
    });
   app.post("/api/auth/signup",
     [
+
       checkDuplicateUsername,
       checkDuplicateEmail,
       checkRolesExisted
     ],
     signup
   );
-  app.post("/api/auth/signin", signin);
+  app.post("/api/auth/signin", 
+    signin
+  );
 };
 
 export {authRoutes}

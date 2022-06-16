@@ -1,27 +1,29 @@
 import {db} from "../models"
 import {GameModel, GameModelDB } from '../models/game.model'
-// import { Stat} from '../interfaces/interfaces'
+
 enum Stat {W = "W", D = "D", L = "L"}
 
 const Game = db.game;
 const User = db.user;
 
+const runFunctionOnGame = async (id:string, func: (game: any) => void) => {
+  try {
+    let game = await Game.findOne({ _id: id  })
+    if (game) {
+      func(game)
+    }
+  } catch (err) {
+      return;
+  }  
+}
 
 const editGame = async (id: String, obj: GameModel) => {
-    try {
-      let game = await Game.findOne({ _id: id  })
-      if (game) {
-        Object.keys(obj)
-        .forEach(key => {
-          if (game) { game[key as keyof GameModel] = obj[key as keyof GameModel]}
-        });
-        game.last_change = new Date().toUTCString()
-        game.save()
-      }
-    } catch (err) {
-        return;
-    }
+  try {
+    await Game.findOneAndUpdate({ _id: id}, obj)
+  } catch (err) {
+    return;
   }
+}
   
   const AddStatToUser = async (userid: string, stat: Stat, gameid: String) => {
       try {
@@ -44,7 +46,7 @@ const editGame = async (id: String, obj: GameModel) => {
       else {return game.player0id as string}
   }
   
-  const endGame = (game: GameModelDB) => {
+  const endGame = async (game: GameModelDB) => {
     if (game.gameasjson) {
     let data = JSON.parse(game.gameasjson)
     data.status = "Ended"
@@ -52,7 +54,7 @@ const editGame = async (id: String, obj: GameModel) => {
     delete game.draw_proposed
     game.last_change = new Date().toUTCString()
     game.gameasjson = JSON.stringify(data)
-    game.save()
+    await game.save()
     }
   }
 
@@ -79,4 +81,4 @@ const editGame = async (id: String, obj: GameModel) => {
     }
   }
 
-  export {editGame, addStatistics}
+  export {editGame, addStatistics, runFunctionOnGame, endGame}
