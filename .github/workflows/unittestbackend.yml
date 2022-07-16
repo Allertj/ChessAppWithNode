@@ -1,0 +1,20 @@
+name: ChessApp Continuous Integration - Unittests Backend
+
+on: 
+  push: 
+    branches:
+      - master 
+
+jobs: 
+  deploy: 
+    runs-on: ubuntu-latest
+    steps: 
+      - uses: actions/checkout@master
+      - uses: actions/setup-node@v1
+        with: 
+          node-version: 16
+      - run: cp docker/server-package.json ./package.json
+      - run: npm install
+      - run: npm install react-scripts@5.0.1 -g 
+      - run: npm test
+      - run: npm run server1

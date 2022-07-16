@@ -75,7 +75,6 @@ const BoardContainer = (gameid: BoardContainerProps) => {
             
         } else {
             gameid.game.makeMove(gameid.game.board, highlighted[0],highlighted[1], x, y, gameid.game.color)
-            // console.log(JSON.stringify(gameid.game))
             gameid.socketCom.SendMove({x: highlighted[0], y: highlighted[1], destx: x, desty: y, 
                                     gameid: gameid.game.id, 
                                     gameasjson:JSON.stringify(gameid.game, replacer),
